@@ -2,29 +2,14 @@ import Link from 'next/link';
 import { ReactNode } from 'react';
 import Text from './Text';
 
-interface ContactData {
+export interface PersonalData {
   type: string
-  label: string
   url: string
 }
 
-const personal: ContactData[] = [
-  {
-    type: 'Site',
-    label: 'kortkamp.dev',
-    url: 'https://kortkamp.dev',
-  },
-  {
-    type: 'Github',
-    label: 'github.com/kortkamp',
-    url: 'https://github.com/kortkamp',
-  },
-  {
-    type: 'Linkedin',
-    label: 'linkedin.com/in/kortkamp',
-    url: 'https://www.linkedin.com/in/kortkamp/',
-  },
-];
+interface Props {
+  data: PersonalData[]
+}
 
 function PersonalItem({ children }:{ children: ReactNode }) {
   return (
@@ -34,15 +19,15 @@ function PersonalItem({ children }:{ children: ReactNode }) {
   );
 }
 
-function Personal() {
+function Personal({ data }:Props) {
   return (
     <ul className="flex flex-col gap-3">
       {
-        personal.map((item) => (
+        data.map((item) => (
           <PersonalItem key={item.type}>
             <Text variant="light">{item.type}</Text>
             <Link href={item.url}>
-              <Text variant="standard">{item.label}</Text>
+              <Text variant="standard">{item.url.split('//')[1]}</Text>
             </Link>
           </PersonalItem>
         ))

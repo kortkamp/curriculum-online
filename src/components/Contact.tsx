@@ -45,22 +45,33 @@ function LocationIcon() {
   );
 }
 
-function Contact() {
+export interface ContactData {
+  mail:string
+  phone: string
+  location: string
+  locationLink?: string
+}
+
+interface Props {
+  data: ContactData
+}
+
+function Contact({ data }:Props) {
   return (
     <ul className="flex justify-between text-sm text-gray-400">
       <ContactItem>
         <MailIcon />
         <span>
-          <Link className="flex gap-2" href="mailto:marcelusmedius@gmail.com">
-            marcelusmedius@gmail.com
+          <Link className="flex gap-2" href={`mailto:${data.mail}`}>
+            {data.mail}
           </Link>
         </span>
       </ContactItem>
       <ContactItem>
         <PhoneIcon />
         <span>
-          <Link className="flex gap-2" href="tel:(22) 99708-8801">
-            (22) 99708-8801
+          <Link className="flex gap-2" href={`tel:${data.phone}`}>
+            {data.phone}
           </Link>
 
         </span>
@@ -68,8 +79,8 @@ function Contact() {
       <ContactItem>
         <LocationIcon />
         <span>
-          <Link className="flex gap-2" href="https://goo.gl/maps/2sELRQKVCeHoHok57">
-            Aperibé - RJ
+          <Link className="flex gap-2" href={data.locationLink || ''}>
+            {data.location}
           </Link>
         </span>
       </ContactItem>
