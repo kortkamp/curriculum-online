@@ -1,5 +1,31 @@
+import Link from "next/link"
 import { ReactNode } from "react"
 import Text from "./Text"
+
+
+interface ContactData {
+  type: string
+  label: string
+  url: string
+}
+
+const personal: ContactData[] = [
+  {
+    type: 'Site',
+    label: 'kortkamp.dev',
+    url: 'https://kortkamp.dev'
+  },
+  {
+    type: 'Github',
+    label: 'github.com/kortkamp',
+    url: 'https://github.com/kortkamp'
+  },
+  {
+    type: 'Linkedin',
+    label: 'linkedin.com/in/kortkamp',
+    url: 'https://www.linkedin.com/in/kortkamp/'
+  }
+]
 
 const PersonalItem = ({children}:{children: ReactNode}) =>(
   <li className="flex flex-col">
@@ -7,22 +33,19 @@ const PersonalItem = ({children}:{children: ReactNode}) =>(
   </li>
 )
 
-
 const Personal = ()=> {
   return (
     <ul className="flex flex-col gap-3">
-      <PersonalItem>
-        <Text variant="light">Site</Text>
-        <Text variant="standard">website.com</Text>
-      </PersonalItem>
-      <PersonalItem>
-        <Text variant="light">Github</Text>
-        <Text variant="standard">website.com</Text>
-      </PersonalItem>
-      <PersonalItem>
-        <Text variant="light">Linkedin</Text>
-        <Text variant="standard">website.com</Text>
-      </PersonalItem>
+      {
+        personal.map(item => (
+          <PersonalItem key={item.type}>
+            <Text variant="light">{item.type}</Text>
+            <Link href={item.url}>
+              <Text variant="standard">{item.label}</Text>
+            </Link>
+          </PersonalItem>
+        ))
+      }
     </ul>
   )
 }
