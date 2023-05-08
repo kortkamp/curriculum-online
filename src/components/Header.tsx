@@ -1,7 +1,7 @@
-import Contact from "./Contact"
-import { SafeArea } from "./SafeArea"
+import Contact from './Contact';
+import SafeArea from './SafeArea';
 
-const Header = ()=> {
+function Header() {
   return (
     <header className="bg-slate-700 text-gray-200">
       <SafeArea className="py-10">
@@ -15,11 +15,11 @@ const Header = ()=> {
             Desenvolvedor Fullstack
           </h3>
         </div>
-        <Contact></Contact>
+        <Contact />
       </SafeArea>
     </header>
 
-  )
+  );
 }
 
-export default Header
+export default Header;

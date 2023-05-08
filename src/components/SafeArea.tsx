@@ -3,12 +3,14 @@ interface SafeAreaProps {
   className?: string;
 }
 
-const SafeArea = ({ children, className = '' }: SafeAreaProps) => (
-  <div
-    className={`max-w-[1024px] mx-auto px-10 ${className}`}
-  >
-    {children}
-  </div>
-);
+function SafeArea({ children, className = '' }: SafeAreaProps) {
+  return (
+    <div
+      className={`max-w-[1024px] mx-auto px-10 ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
 
-export { SafeArea };
+export default SafeArea;
