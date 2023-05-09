@@ -1,15 +1,27 @@
 import Curriculum from '@/components/Curriculum';
 
 export const curriculum = {
-  headerData: {
+  personal: {
     name: 'Marcelo Teixeira',
     title: 'Desenvolvedor FullStack',
-    contactData: {
-      mail: 'marcelusmedius@gmail.com',
-      phone: '(22) 99708-8801',
-      location: 'Aperibé - RJ',
-      locationLink: 'https://goo.gl/maps/2sELRQKVCeHoHok57',
-    },
+    mail: 'marcelusmedius@gmail.com',
+    phone: '(22) 99708-8801',
+    location: 'Aperibé - RJ',
+    locationLink: 'https://goo.gl/maps/2sELRQKVCeHoHok57',
+    social: [
+      {
+        type: 'Site',
+        url: 'https://kortkamp.dev',
+      },
+      {
+        type: 'Github',
+        url: 'https://github.com/kortkamp',
+      },
+      {
+        type: 'Linkedin',
+        url: 'https://www.linkedin.com/in/kortkamp/',
+      },
+    ],
   },
   resume: `Sou um desenvolvedor fullstack com foco no ecossistema Javascript/Typescript, 
           tenho conhecimento e experiência em várias ferramentas relacionadas assim como versionamento e métodos ágeis.
@@ -42,33 +54,35 @@ export const curriculum = {
     course: 'Análise e Desenvolvimento de Sistemas',
     institution: 'Uninter (em andamento)',
   }],
-  personal: [
-    {
-      type: 'Site',
-      url: 'https://kortkamp.dev',
-    },
-    {
-      type: 'Github',
-      url: 'https://github.com/kortkamp',
-    },
-    {
-      type: 'Linkedin',
-      url: 'https://www.linkedin.com/in/kortkamp/',
-    },
-  ],
+
   skills: [
-    'Node',
-    'React / Next.js',
-    'Git',
-    'PostgreSQL, MySQL, SQLite',
-    'Mongo, REDIS',
-    'Docker',
-    'CI CD',
-    'SOLID, DDD, TDD',
+    {
+      title: 'Node',
+      level: 4,
+    },
+    {
+      title: 'React / Next.js',
+      level: 4,
+    },
+    {
+      title: 'Git',
+      level: 4,
+    },
+    {
+      title: 'Gambiarra',
+      level: 5,
+    },
+
   ],
   languages: [
-    'Português nativo',
-    'Inglês intermediário',
+    {
+      title: 'Português',
+      level: 5,
+    },
+    {
+      title: 'Inglês',
+      level: 3,
+    },
   ],
 };
 

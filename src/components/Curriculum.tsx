@@ -1,22 +1,51 @@
 import Divider from './Divider';
 import { ExperienceData, ExperienceItem } from './ExperienceItem';
-import Header, { HeaderData } from './Header';
-import Personal, { PersonalData } from './Personal';
+import Header from './Header';
+import Personal from './Personal';
 import SafeArea from './SafeArea';
 import Section from './Section';
 import Text from './Text';
 
+interface Skill {
+  title:string
+  level?: number
+}
+
+interface Language {
+  title:string
+  level?: number
+}
+
+interface Course {
+  name:string
+  month: number
+  year: number
+  description:string
+}
+
 interface CurriculumData {
-  headerData: HeaderData
+  personal: {
+    name: string,
+    title: string,
+    mail: string,
+    phone: string,
+    location?: string,
+    locationLink?: string,
+    social:
+    {
+      type: string,
+      url: string,
+    }[]
+  },
   resume:string
   experienceData: ExperienceData[]
   education: {
     course: string
     institution: string,
   }[]
-  personal: PersonalData[]
-  skills: string[]
-  languages: string[]
+  courses: Course[]
+  skills: Skill[]
+  languages: Language[]
 }
 
 interface Props {
@@ -25,11 +54,11 @@ interface Props {
 
 function Curriculum({ data }: Props) {
   const {
-    headerData, resume, experienceData, education, personal, skills, languages,
+    resume, experienceData, education, personal, skills, languages,
   } = data;
   return (
     <div className="w-[210mm] h-[297mm] bg-gray-50">
-      <Header data={headerData} />
+      <Header data={personal} />
       <main className="mt-10">
         <SafeArea className="flex gap-2">
           <article className="w-4/5">
@@ -58,18 +87,18 @@ function Curriculum({ data }: Props) {
           <Divider variant="vertical" />
           <aside className="">
             <Section title="Dados Pessoais" variant="aside">
-              <Personal data={personal} />
+              <Personal data={personal.social} />
             </Section>
             <Divider />
             <Section title="Competências" variant="aside">
               {skills.map((skill) => (
-                <Text key={skill}>{skill}</Text>
+                <Text key={skill.title}>{skill.title}</Text>
               ))}
             </Section>
             <Divider />
             <Section title="Idiomas" variant="aside">
               {languages.map((language) => (
-                <Text key={language}>{language}</Text>
+                <Text key={language.title}>{language.title}</Text>
               ))}
             </Section>
           </aside>

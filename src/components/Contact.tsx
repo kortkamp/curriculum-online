@@ -48,7 +48,7 @@ function LocationIcon() {
 export interface ContactData {
   mail:string
   phone: string
-  location: string
+  location?: string
   locationLink?: string
 }
 

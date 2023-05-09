@@ -1,11 +1,17 @@
 import Text from './Text';
 
+interface MonthYear {
+  month: number, year: number
+}
+
 export interface ExperienceData {
   company: string
   position: string
+  city?: string
+  start: MonthYear
+  end: MonthYear
+  isCurrent: boolean
   description: string
-  startDate: string
-  endDate:string
 }
 
 interface Props {
@@ -22,10 +28,10 @@ function ExperienceItem({ experienceData }:Props) {
         </div>
         <div>
           <Text>
-            {experienceData.startDate}
+            {experienceData.start.year}
             {' '}
             -
-            {experienceData.endDate}
+            {experienceData.end.year}
           </Text>
         </div>
       </header>
