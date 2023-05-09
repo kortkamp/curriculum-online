@@ -1,61 +1,20 @@
+import ICurriculum from '@/types/ICurriculum';
 import Divider from './Divider';
-import { ExperienceData, ExperienceItem } from './ExperienceItem';
+import ExperienceItem from './ExperienceItem';
 import Header from './Header';
 import Personal from './Personal';
 import SafeArea from './SafeArea';
 import Section from './Section';
 import Text from './Text';
 
-interface Skill {
-  title:string
-  level?: number
-}
-
-interface Language {
-  title:string
-  level?: number
-}
-
-interface Course {
-  name:string
-  month: number
-  year: number
-  description:string
-}
-
-interface CurriculumData {
-  personal: {
-    name: string,
-    title: string,
-    mail: string,
-    phone: string,
-    location?: string,
-    locationLink?: string,
-    social:
-    {
-      type: string,
-      url: string,
-    }[]
-  },
-  resume:string
-  experienceData: ExperienceData[]
-  education: {
-    course: string
-    institution: string,
-  }[]
-  courses: Course[]
-  skills: Skill[]
-  languages: Language[]
-}
-
 interface Props {
-  data: CurriculumData
+  curriculum: ICurriculum
 }
 
-function Curriculum({ data }: Props) {
+function Curriculum({ curriculum }: Props) {
   const {
-    resume, experienceData, education, personal, skills, languages,
-  } = data;
+    resume, experience, education, personal, skills, languages,
+  } = curriculum;
   return (
     <div className="w-[210mm] h-[297mm] bg-gray-50">
       <Header data={personal} />
@@ -68,7 +27,7 @@ function Curriculum({ data }: Props) {
             <Divider />
             <Section title="Experiência" className="flex gap-10">
               {
-                experienceData.map((item) => (
+                experience.map((item) => (
                   <ExperienceItem key={item.company + item.position} experienceData={item} />
                 ))
               }

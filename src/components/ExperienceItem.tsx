@@ -1,21 +1,8 @@
+import { IExperience } from '@/types/ICurriculum';
 import Text from './Text';
 
-interface MonthYear {
-  month: number, year: number
-}
-
-export interface ExperienceData {
-  company: string
-  position: string
-  city?: string
-  start: MonthYear
-  end: MonthYear
-  isCurrent: boolean
-  description: string
-}
-
 interface Props {
-  experienceData : ExperienceData
+  experienceData : IExperience
 }
 
 function ExperienceItem({ experienceData }:Props) {
@@ -31,7 +18,7 @@ function ExperienceItem({ experienceData }:Props) {
             {experienceData.start.year}
             {' '}
             -
-            {experienceData.end.year}
+            {experienceData.end?.year}
           </Text>
         </div>
       </header>
@@ -43,4 +30,4 @@ function ExperienceItem({ experienceData }:Props) {
   );
 }
 
-export { ExperienceItem };
+export default ExperienceItem;
