@@ -21,7 +21,7 @@ function Curriculum({ curriculum }: Props) {
       <Header data={personal} />
       <main className="mt-10">
         <SafeArea className="flex gap-2">
-          <article className="w-4/5">
+          <article className="w-2/3">
             <Section title="Resumo" className="flex gap-10">
               <Text>{resume}</Text>
             </Section>
@@ -45,7 +45,7 @@ function Curriculum({ curriculum }: Props) {
             </Section>
           </article>
           <Divider variant="vertical" />
-          <aside className="">
+          <aside className="w-1/3">
             <Section title="Dados Pessoais" variant="aside">
               <Personal data={personal.other} />
             </Section>
