@@ -27,8 +27,6 @@
       "react/require-default-props": "off",
       "react/jsx-props-no-spreading": "off",
       "react/prop-types": "off"
-    },
-    "exclude": [
-        "tailwind.config.js"
-    ]
+    }
+  
 }
