@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { ButtonHTMLAttributes, DetailedHTMLProps, ReactNode } from 'react';
 
 interface Props extends
@@ -7,12 +8,17 @@ interface Props extends
 }
 
 function Button({
-  type, children, icon, ...restOfProps
+  type, children, icon, className, ...restOfProps
 }: Props) {
   return (
     <button
       type={type === 'submit' ? 'submit' : 'button'}
-      className="flex items-center gap-1 px-2 py-2 border rounded border-stone-300 hover:bg-primary-light transition-colors"
+      className={
+        clsx(
+          'flex items-center gap-1 px-2 py-2 border rounded border-stone-300 hover:bg-primary-light transition-colors',
+          className,
+        )
+}
       {...restOfProps}
     >
       {icon}
