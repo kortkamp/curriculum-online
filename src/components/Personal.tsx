@@ -27,7 +27,7 @@ function Personal({ data }:Props) {
           <PersonalItem key={item.name}>
             <Text variant="light">{item.name}</Text>
             {/* <Link href={item.value}> */}
-            <Text variant="standard">{item.value?.split('//')[1]}</Text>
+            <Text variant="standard">{item.value}</Text>
             {/* </Link> */}
           </PersonalItem>
         ))
