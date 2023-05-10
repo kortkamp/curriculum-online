@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
+import clsx from 'clsx';
 
 interface Props {
   children: ReactNode
@@ -9,9 +10,10 @@ interface Props {
 interface ItemProps {
   children: ReactNode
   value: string
+  className?:string
 }
 
-export function AppAccordionItem({ children, value }: ItemProps) {
+export function AppAccordionItem({ children, value, className }: ItemProps) {
   return (
     <Accordion.Item
       className="focus-within:shadow-mauve12 mt-px overflow-hidden first:mt-0 first:rounded-t last:rounded-b focus-within:relative focus-within:z-10 focus-within:shadow-[0_0_0_2px]"
@@ -25,13 +27,15 @@ export function AppAccordionItem({ children, value }: ItemProps) {
           <ChevronDownIcon
             className="text-violet10 ease-[cubic-bezier(0.87,_0,_0.13,_1)] transition-transform duration-300 group-data-[state=open]:rotate-180"
             aria-hidden
+            width={30}
+            height={30}
           />
         </Accordion.Trigger>
       </Accordion.Header>
       <Accordion.Content
-        className="text-mauve11 bg-mauve2 data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp overflow-hidden text-[15px]"
+        className="text-mauve11 bg-background-light data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp overflow-hidden text-[15px]"
       >
-        <div className="py-[15px] px-5">{children}</div>
+        <div className={clsx('py-[15px] px-5', className)}>{children}</div>
       </Accordion.Content>
     </Accordion.Item>
   );

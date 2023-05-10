@@ -10,18 +10,18 @@ export const curriculum:ICurriculum = {
     phone: '(22) 99708-8801',
     location: 'Aperibé - RJ',
     locationLink: 'https://goo.gl/maps/2sELRQKVCeHoHok57',
-    social: [
+    other: [
       {
-        type: 'Site',
-        url: 'https://kortkamp.dev',
+        name: 'Site',
+        value: 'https://kortkamp.dev',
       },
       {
-        type: 'Github',
-        url: 'https://github.com/kortkamp',
+        name: 'Github',
+        value: 'https://github.com/kortkamp',
       },
       {
-        type: 'Linkedin',
-        url: 'https://www.linkedin.com/in/kortkamp/',
+        name: 'Linkedin',
+        value: 'https://www.linkedin.com/in/kortkamp/',
       },
     ],
   },

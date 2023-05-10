@@ -25,13 +25,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         )
       }
     >
-      <span className="py-1 px-2">{label}</span>
+      <span className="py-1 px-2 text-light">{label}</span>
       <input
         name={name}
         {...props}
         className={
           clsx(
-            'bg-zinc-200 text-lg text-gray-800 rounded-md py-1 px-2 w-full',
+            'bg-background-medium text-lg text-medium rounded-md py-1 px-2 w-full focus:bg-primary-light ring-primary outline-primary ',
             className,
           )
         }

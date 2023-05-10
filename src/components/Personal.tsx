@@ -2,9 +2,9 @@ import Link from 'next/link';
 import { ReactNode } from 'react';
 import Text from './Text';
 
-export interface PersonalData {
-  type: string
-  url: string
+interface PersonalData {
+  name: string
+  value: string
 }
 
 interface Props {
@@ -24,11 +24,11 @@ function Personal({ data }:Props) {
     <ul className="flex flex-col gap-3">
       {
         data.map((item) => (
-          <PersonalItem key={item.type}>
-            <Text variant="light">{item.type}</Text>
-            <Link href={item.url}>
-              <Text variant="standard">{item.url.split('//')[1]}</Text>
-            </Link>
+          <PersonalItem key={item.name}>
+            <Text variant="light">{item.name}</Text>
+            {/* <Link href={item.value}> */}
+            <Text variant="standard">{item.value?.split('//')[1]}</Text>
+            {/* </Link> */}
           </PersonalItem>
         ))
       }

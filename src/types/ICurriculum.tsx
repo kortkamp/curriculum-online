@@ -37,10 +37,10 @@ export interface IPersonalData {
   phone: string,
   location?: string,
   locationLink?: string,
-  social:
+  other:
   {
-    type: string,
-    url: string,
+    name: string,
+    value: string,
   }[]
 }
 

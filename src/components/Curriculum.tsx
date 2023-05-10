@@ -15,6 +15,7 @@ function Curriculum({ curriculum }: Props) {
   const {
     resume, experience, education, personal, skills, languages,
   } = curriculum;
+
   return (
     <div className="w-[210mm] h-[297mm] bg-gray-50">
       <Header data={personal} />
@@ -46,7 +47,7 @@ function Curriculum({ curriculum }: Props) {
           <Divider variant="vertical" />
           <aside className="">
             <Section title="Dados Pessoais" variant="aside">
-              <Personal data={personal.social} />
+              <Personal data={personal.other} />
             </Section>
             <Divider />
             <Section title="Competências" variant="aside">

@@ -17,6 +17,20 @@ module.exports = {
       colors: {
         ...mauve,
         ...violet,
+        "primary": {
+          "light":violet.violet5,
+           DEFAULT: violet.violet11
+        },
+        
+        "light": mauve.mauve10,
+        "medium": mauve.mauve12,
+
+        "background": {
+          "light": mauve.mauve1,
+          "medium": mauve.mauve4,
+          "strong": mauve.mauve10,
+        }
+        
       },
       keyframes: {
         slideDown: {
