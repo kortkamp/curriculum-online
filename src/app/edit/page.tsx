@@ -2,25 +2,44 @@
 
 import Curriculum from '@/components/Curriculum';
 import ICurriculum from '@/types/ICurriculum';
-import { useState } from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form';
 
 import { curriculum } from '../page';
 import AppAccordion, { AppAccordionItem } from './components/Accordion';
 import AddButton from './components/AddButton';
 import Education from './components/Education';
 import Input from './components/Input';
+import RemoveButton from './components/RemoveButton';
 
 // type OptionalPersonalFields = Record<string, string>;
 
+const optionalPersonalFields = [
+  'Linkedin',
+  'Site',
+  'Data de Nascimento',
+  'CNH',
+  'CPF',
+];
+
 export default function Home() {
   const {
-    register, handleSubmit, watch,
+    register, handleSubmit, watch, control,
   } = useForm<ICurriculum>({
     defaultValues: curriculum,
   });
 
-  const [optionalFields, setOptionalFields] = useState<string[]>([]);
+  const {
+    fields, append, prepend, remove, swap, move, insert,
+  } = useFieldArray({
+    control, // control props comes from useForm (optional: if you are using FormContext)
+    name: 'personal.other', // unique name for your Field Array
+  });
+
+  const otherOptionalPersonal = watch('personal.other').map((other) => other.name);
+
+  const optionalButtons = optionalPersonalFields.filter(
+    (field) => !otherOptionalPersonal.includes(field),
+  );
 
   const onSubmit: SubmitHandler<ICurriculum> = (data) => console.log(data);
   return (
@@ -29,7 +48,7 @@ export default function Home() {
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-4xl m-auto">
           <AppAccordion>
             <AppAccordionItem value="Dados Pessoais" className="flex flex-col gap-5">
-              <div className="flex justify-between gap-4 flex-1">
+              <div className="flex justify-between gap-4 flex-1 max-md:flex-col">
                 <Input {...register('personal.name')} label="Nome" md={6} />
                 <Input {...register('personal.surname')} label="Sobrenome" md={6} />
               </div>
@@ -41,10 +60,19 @@ export default function Home() {
                 <Input {...register('personal.phone')} label="Telefone" md={6} />
                 <Input {...register('personal.location')} label="Endereço" md={6} />
               </div>
+              <div>
+                {fields.map((field, index) => (
+                  <div key={field.id} className="flex items-end gap-1">
+                    <Input {...register(`personal.other.${index}.value`)} label={field.name} md={10} />
+                    <RemoveButton onClick={() => remove(index)} />
+                  </div>
+                ))}
+              </div>
               <div className="flex gap-5 flex-wrap">
-                <AddButton>Site</AddButton>
-                <AddButton>Linkedin</AddButton>
-                <AddButton>Site</AddButton>
+                {optionalButtons.map((button) => (
+                  <AddButton key={button} onClick={() => append({ name: button, value: '' })}>{button}</AddButton>
+                ))}
+
               </div>
             </AppAccordionItem>
             <AppAccordionItem value="Educação">

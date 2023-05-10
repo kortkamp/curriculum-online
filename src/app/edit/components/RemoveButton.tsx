@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes, DetailedHTMLProps } from 'react';
 
-import { PlusIcon } from '@radix-ui/react-icons';
+import { TrashIcon } from '@radix-ui/react-icons';
 
 import Button from './Button';
 
@@ -9,10 +9,10 @@ interface Props extends
   // type: 'button' | 'submit' | 'reset' | undefined
 }
 
-function AddButton({ ...props }: Props) {
+function RemoveButton({ ...props }: Props) {
   return (
-    <Button {...props} icon={<PlusIcon />} />
+    <Button {...props} icon={<TrashIcon />} />
   );
 }
 
-export default AddButton;
+export default RemoveButton;
