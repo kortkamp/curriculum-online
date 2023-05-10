@@ -31,7 +31,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {...props}
         className={
           clsx(
-            'bg-background-medium text-lg text-medium rounded-md py-1 px-2 w-full focus:bg-primary-light ring-primary outline-primary ',
+            'bg-background-medium text-lg text-medium rounded-md py-1 px-2 w-full focus:bg-primary-light ring-primary outline-primary transition-colors',
             className,
           )
         }
