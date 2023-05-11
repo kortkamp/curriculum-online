@@ -15,7 +15,7 @@ function ExperienceItem({ experienceData }:Props) {
         </div>
         <div>
           <Text>
-            {experienceData.start.year}
+            {experienceData.start?.year}
             {' '}
             -
             {experienceData.end?.year}

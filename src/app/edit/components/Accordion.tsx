@@ -21,7 +21,7 @@ export function AppAccordionItem({ children, value, className }: ItemProps) {
     >
       <Accordion.Header className="flex">
         <Accordion.Trigger
-          className="text-violet11 shadow-mauve6 hover:bg-mauve2 group flex h-[45px] flex-1 cursor-default items-center justify-between bg-white px-5 text-lg font-semibold leading-none shadow-[0_1px_0] outline-none"
+          className="text-violet11 shadow-mauve6 hover:bg-mauve2 group flex h-[70px] flex-1 cursor-default items-center justify-between bg-white px-5 text-lg font-semibold leading-none shadow-[0_1px_0] outline-none"
         >
           {value}
           <ChevronDownIcon

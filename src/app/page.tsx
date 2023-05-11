@@ -77,13 +77,12 @@ export const curriculum:ICurriculum = {
     },
   ],
   education: [{
-    course: 'Análise e Desenvolvimento de Sistemas',
-    institution: 'Uninter (em andamento)',
-
+    title: 'Análise e Desenvolvimento de Sistemas',
+    origin: 'Uninter (em andamento)',
   },
   {
-    course: 'Física',
-    institution: 'UFF',
+    title: 'Física',
+    origin: 'UFF',
     city: 'Santo Antonio de Padua',
   }],
 

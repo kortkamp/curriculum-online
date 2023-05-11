@@ -1,9 +1,4 @@
-interface Skill {
-  title:string
-  level?: number
-}
-
-interface Language {
+export interface ISkill {
   title:string
   level?: number
 }
@@ -16,17 +11,18 @@ interface Course {
 }
 
 interface MonthYear {
-  month: number, year: number
+  month: number | undefined,
+  year: number | undefined
 }
 
 export interface IExperience {
   title: string
   origin: string
   city?: string
-  start: MonthYear
+  start?: MonthYear
   end?: MonthYear
-  isCurrent: boolean
-  description: string
+  isCurrent?: boolean
+  description?: string
 }
 
 export interface IPersonalData {
@@ -48,13 +44,8 @@ export default interface ICurriculum {
   personal: IPersonalData
   resume:string
   experience: IExperience[]
-  education: {
-    course: string
-    institution: string,
-    city?: string
-    description?: string
-  }[]
+  education: IExperience[]
   courses?: Course[]
-  skills: Skill[]
-  languages: Language[]
+  skills: ISkill[]
+  languages: ISkill[]
 }

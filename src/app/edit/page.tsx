@@ -7,9 +7,10 @@ import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form';
 import { curriculum } from '../page';
 import AppAccordion, { AppAccordionItem } from './components/Accordion';
 import AddButton from './components/AddButton';
-import Education from './components/Education';
+import Experience from './components/Experience';
 import Input from './components/Input';
 import RemoveButton from './components/RemoveButton';
+import Skill from './components/Skill';
 
 // type OptionalPersonalFields = Record<string, string>;
 
@@ -29,13 +30,28 @@ export default function Home() {
   });
 
   const otherPersonal = useFieldArray({
-    control, // control props comes from useForm (optional: if you are using FormContext)
-    name: 'personal.other', // unique name for your Field Array
+    control,
+    name: 'personal.other',
   });
 
   const education = useFieldArray({
-    control, // control props comes from useForm (optional: if you are using FormContext)
-    name: 'education', // unique name for your Field Array
+    control,
+    name: 'education',
+  });
+
+  const experience = useFieldArray({
+    control,
+    name: 'experience',
+  });
+
+  const skills = useFieldArray({
+    control,
+    name: 'skills',
+  });
+
+  const languages = useFieldArray({
+    control,
+    name: 'languages',
   });
 
   const otherOptionalPersonal = watch('personal.other').map((other) => other.name);
@@ -89,17 +105,76 @@ export default function Home() {
               </Input>
 
             </AppAccordionItem>
-            <AppAccordionItem value="Educação">
+            <AppAccordionItem value="Formação">
               <div className="flex flex-col gap-4">
                 {education.fields.map((item, index) => (
-                  <Education key={item.id} index={index} education={item} register={register} />
-                  // <div  className="flex items-end gap-1">
-                  //   <Input {...register(`personal.other.${index}.value`)} label={field.name} md={10} />
-                  //   <RemoveButton onClick={() => otherPersonal.remove(index)} className="mb-[2px]" title="Remover o campo" />
-                  // </div>
+                  <Experience
+                    key={item.id}
+                    index={index}
+                    data={watch(`education.${index}`)}
+                    register={register}
+                    remove={education.remove}
+                    fieldName="education"
+                  />
                 ))}
                 <div>
-                  <AddButton onClick={() => education.append({ course: '', institution: '' })}>Adicionar Formação</AddButton>
+                  <AddButton onClick={() => education.append({ title: '', origin: '' })}>Adicionar Formação</AddButton>
+                </div>
+              </div>
+            </AppAccordionItem>
+            <AppAccordionItem value="Experience">
+              <div className="flex flex-col gap-4">
+                {experience.fields.map((item, index) => (
+                  <Experience
+                    key={item.id}
+                    index={index}
+                    data={watch(`experience.${index}`)}
+                    register={register}
+                    remove={experience.remove}
+                    fieldName="experience"
+                  />
+                ))}
+                <div>
+                  <AddButton onClick={() => experience.append({ title: '', origin: '' })}>Adicionar Experiência</AddButton>
+                </div>
+              </div>
+            </AppAccordionItem>
+            <AppAccordionItem value="Competências">
+              <div className="flex flex-col gap-4">
+                {skills.fields.map((item, index) => (
+                  <Skill
+                    key={item.id}
+                    index={index}
+                    data={watch(`skills.${index}`)}
+                    register={register}
+                    remove={skills.remove}
+                    fieldName="skills"
+                  />
+                ))}
+                <div>
+                  <AddButton
+                    onClick={() => { skills.append({ title: '', level: 0 }); }}
+                  >
+                    Adicionar Competência
+
+                  </AddButton>
+                </div>
+              </div>
+            </AppAccordionItem>
+            <AppAccordionItem value="Idiomas">
+              <div className="flex flex-col gap-4">
+                {languages.fields.map((item, index) => (
+                  <Skill
+                    key={item.id}
+                    index={index}
+                    data={watch(`languages.${index}`)}
+                    register={register}
+                    remove={languages.remove}
+                    fieldName="languages"
+                  />
+                ))}
+                <div>
+                  <AddButton onClick={() => languages.append({ title: '', level: 0 })}>Adicionar Competência</AddButton>
                 </div>
               </div>
             </AppAccordionItem>

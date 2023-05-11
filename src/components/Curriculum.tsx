@@ -37,9 +37,9 @@ function Curriculum({ curriculum }: Props) {
 
             <Section title="Educação">
               {education.map((item) => (
-                <div key={item.course + item.institution} className="flex flex-col">
-                  <Text variant="subtitle">{item.course}</Text>
-                  <Text variant="light">{item.institution}</Text>
+                <div key={item.title + item.origin} className="flex flex-col">
+                  <Text variant="subtitle">{item.title}</Text>
+                  <Text variant="light">{item.origin}</Text>
                 </div>
               ))}
             </Section>
