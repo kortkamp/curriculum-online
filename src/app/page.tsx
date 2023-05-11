@@ -1,4 +1,7 @@
+'use client';
+
 import Curriculum from '@/components/Curriculum';
+
 import ICurriculum from '@/types/ICurriculum';
 
 export const curriculum:ICurriculum = {
@@ -31,8 +34,8 @@ export const curriculum:ICurriculum = {
           respeito, cordialidade e principalmente paixão por escrever código e entregar soluções.`,
   experience: [
     {
-      company: 'Pemak Sistemas',
-      position: 'Fullstack Developer',
+      origin: 'Pemak Sistemas',
+      title: 'Fullstack Developer',
       description: 'Atuei no desenvolvimento de SaaS para geração de portais de prestação de contas para ONGs, fui responsável desde a modelagem ao deploy e manutenção do sistema',
       start: {
         month: 3,
@@ -45,8 +48,8 @@ export const curriculum:ICurriculum = {
       isCurrent: true,
     },
     {
-      company: 'Startup Escolar',
-      position: 'Fullstack Developer',
+      origin: 'Startup Escolar',
+      title: 'Fullstack Developer',
       description: 'Atuei no desenvolvimento de SaaS multi tenant para gestão escolar usando Node, React, Postgres',
       start: {
         month: 3,
@@ -59,8 +62,8 @@ export const curriculum:ICurriculum = {
       isCurrent: false,
     },
     {
-      company: 'Creative Code - Londrina',
-      position: 'Backend Developer',
+      origin: 'Creative Code - Londrina',
+      title: 'Backend Developer',
       description: 'Atuei no desenvolvimento e manutenção de APIs para sistemas diversos usando Node',
       start: {
         month: 3,
@@ -77,6 +80,11 @@ export const curriculum:ICurriculum = {
     course: 'Análise e Desenvolvimento de Sistemas',
     institution: 'Uninter (em andamento)',
 
+  },
+  {
+    course: 'Física',
+    institution: 'UFF',
+    city: 'Santo Antonio de Padua',
   }],
 
   skills: [

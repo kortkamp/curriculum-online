@@ -20,8 +20,8 @@ interface MonthYear {
 }
 
 export interface IExperience {
-  company: string
-  position: string
+  title: string
+  origin: string
   city?: string
   start: MonthYear
   end?: MonthYear
@@ -51,6 +51,8 @@ export default interface ICurriculum {
   education: {
     course: string
     institution: string,
+    city?: string
+    description?: string
   }[]
   courses?: Course[]
   skills: Skill[]

@@ -10,8 +10,8 @@ function ExperienceItem({ experienceData }:Props) {
     <div className="">
       <header className="flex justify-between">
         <div className="flex flex-col">
-          <Text variant="subtitle">{experienceData.position}</Text>
-          <Text variant="light">{experienceData.company}</Text>
+          <Text variant="subtitle">{experienceData.title}</Text>
+          <Text variant="light">{experienceData.origin}</Text>
         </div>
         <div>
           <Text>

@@ -29,7 +29,7 @@ function Curriculum({ curriculum }: Props) {
             <Section title="Experiência" className="flex gap-10">
               {
                 experience.map((item) => (
-                  <ExperienceItem key={item.company + item.position} experienceData={item} />
+                  <ExperienceItem key={item.origin + item.title} experienceData={item} />
                 ))
               }
             </Section>

@@ -28,11 +28,14 @@ export default function Home() {
     defaultValues: curriculum,
   });
 
-  const {
-    fields, append, prepend, remove, swap, move, insert,
-  } = useFieldArray({
+  const otherPersonal = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
     name: 'personal.other', // unique name for your Field Array
+  });
+
+  const education = useFieldArray({
+    control, // control props comes from useForm (optional: if you are using FormContext)
+    name: 'education', // unique name for your Field Array
   });
 
   const otherOptionalPersonal = watch('personal.other').map((other) => other.name);
@@ -61,22 +64,44 @@ export default function Home() {
                 <Input {...register('personal.location')} label="Endereço" md={6} />
               </div>
               <div>
-                {fields.map((field, index) => (
+                {otherPersonal.fields.map((field, index) => (
                   <div key={field.id} className="flex items-end gap-1">
                     <Input {...register(`personal.other.${index}.value`)} label={field.name} md={10} />
-                    <RemoveButton onClick={() => remove(index)} />
+                    <RemoveButton onClick={() => otherPersonal.remove(index)} className="mb-[2px]" title="Remover o campo" />
                   </div>
                 ))}
               </div>
               <div className="flex gap-5 flex-wrap">
                 {optionalButtons.map((button) => (
-                  <AddButton key={button} onClick={() => append({ name: button, value: '' })}>{button}</AddButton>
+                  <AddButton
+                    key={button}
+                    onClick={() => otherPersonal.append({ name: button, value: '' })}
+                    title="Adicionar o campo"
+                  >
+                    {button}
+                  </AddButton>
                 ))}
-
               </div>
             </AppAccordionItem>
+            <AppAccordionItem value="Resumo">
+              <Input label="Resumo" md={12} rows={10} asChild {...register('resume')} className="text-sm">
+                <textarea />
+              </Input>
+
+            </AppAccordionItem>
             <AppAccordionItem value="Educação">
-              <Education />
+              <div className="flex flex-col gap-4">
+                {education.fields.map((item, index) => (
+                  <Education key={item.id} index={index} education={item} register={register} />
+                  // <div  className="flex items-end gap-1">
+                  //   <Input {...register(`personal.other.${index}.value`)} label={field.name} md={10} />
+                  //   <RemoveButton onClick={() => otherPersonal.remove(index)} className="mb-[2px]" title="Remover o campo" />
+                  // </div>
+                ))}
+                <div>
+                  <AddButton onClick={() => education.append({ course: '', institution: '' })}>Adicionar Formação</AddButton>
+                </div>
+              </div>
             </AppAccordionItem>
           </AppAccordion>
 
