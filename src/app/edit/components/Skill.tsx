@@ -50,13 +50,17 @@ function Skill({
       </div>
     );
   }
+  console.log(data.title);
+  console.log(data.level);
   return (
     <div className="border p-4 rounded flex justify-between items-center">
       <div className="flex flex-col">
         <span className="text-medium font-semibold">{data.title}</span>
+        { data.level !== 0 && (
         <span className="text-light">
-          {data.level ? skillDescription[data.level || 0] : ''}
+          { skillDescription[data.level || 0] }
         </span>
+        )}
       </div>
       <EditButton title="Editar o campo" onClick={() => setIsEditing(true)} />
     </div>

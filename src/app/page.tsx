@@ -89,7 +89,7 @@ export const curriculum:ICurriculum = {
   skills: [
     {
       title: 'Node',
-      level: 4,
+      level: 0,
     },
     {
       title: 'React / Next.js',

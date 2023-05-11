@@ -122,7 +122,7 @@ export default function Home() {
                 </div>
               </div>
             </AppAccordionItem>
-            <AppAccordionItem value="Experience">
+            <AppAccordionItem value="Experiência">
               <div className="flex flex-col gap-4">
                 {experience.fields.map((item, index) => (
                   <Experience
@@ -184,7 +184,7 @@ export default function Home() {
         </form>
       </div>
       <aside className="flex-1 overflow-y-scroll">
-        <div className="scale-75">
+        <div className="scale-75 shadow-lg">
           <Curriculum curriculum={watch()} />
         </div>
       </aside>
