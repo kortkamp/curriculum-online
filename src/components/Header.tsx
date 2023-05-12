@@ -1,5 +1,5 @@
 import { IPersonalData } from '@/types/ICurriculum';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Contact from './Contact';
 import SafeArea from './SafeArea';
 
@@ -15,10 +15,12 @@ function Header({ data, notifyHeight }:Props) {
 
   const ref = useRef<null | HTMLHeadElement>(null);
 
-  const height = ref.current?.offsetHeight;
-  if (height && notifyHeight) {
-    notifyHeight(height);
-  }
+  useEffect(() => {
+    const height = ref.current?.offsetHeight;
+    if (height && notifyHeight) {
+      notifyHeight(height);
+    }
+  });
 
   return (
     <header ref={ref} className="pb-10">

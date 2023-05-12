@@ -84,7 +84,18 @@ export const curriculum:ICurriculum = {
     title: 'Física',
     origin: 'UFF',
     city: 'Santo Antonio de Padua',
-  }],
+  },
+  {
+    title: 'Física',
+    origin: 'UERJ',
+    city: 'Santo Antonio de Padua',
+  },
+  {
+    title: 'Física',
+    origin: 'USP',
+    city: 'Santo Antonio de Padua',
+  },
+  ],
 
   skills: [
     {

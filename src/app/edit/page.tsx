@@ -185,9 +185,11 @@ export default function Home() {
           <Button className="m-4">Imprimir</Button>
         </form>
       </div>
-      <aside className="flex-1 overflow-y-scroll">
-        <div className="scale-75 shadow-lg">
-          <Curriculum curriculum={watch()} />
+      <aside className="flex-1 overflow-y-scroll flex">
+        <div className="scale-[0.6] m-auto">
+          <div className="shadow-lg">
+            <Curriculum curriculum={watch()} />
+          </div>
         </div>
       </aside>
     </div>

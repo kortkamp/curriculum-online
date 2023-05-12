@@ -1,4 +1,4 @@
-import { ReactNode, useRef } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import Text from './Text';
 
@@ -15,10 +15,12 @@ function Section({
 }:Props) {
   const ref = useRef<null | HTMLDivElement>(null);
 
-  const height = ref.current?.offsetHeight;
-  if (height && notifyHeight) {
-    notifyHeight(height);
-  }
+  useEffect(() => {
+    const height = ref.current?.offsetHeight;
+    if (height && notifyHeight) {
+      notifyHeight(height);
+    }
+  });
   return (
     <section className="flex flex-col" ref={ref}>
       <header className={

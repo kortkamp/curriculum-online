@@ -1,5 +1,5 @@
 import ICurriculum from '@/types/ICurriculum';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import Divider from './Divider';
 import ExperienceItem from './ExperienceItem';
 import Header from './Header';
@@ -7,6 +7,8 @@ import Personal from './Personal';
 import SafeArea from './SafeArea';
 import Section from './Section';
 import Text from './Text';
+
+const pageHeight = 1122; // A4 page
 
 interface Props {
   curriculum: ICurriculum
@@ -23,11 +25,12 @@ function Curriculum({ curriculum }: Props) {
   const [educationHeight, setEducationHeight] = useState(0);
   const [dividerHeight, setDividerHeight] = useState(0);
 
-  console.log(dividerHeight);
+  // console.log(dividerHeight);
   // console.log(resumeHeight);
   // console.log(experienceHeight);
   // console.log(educationHeight);
   console.log(headerHeight + resumeHeight + experienceHeight + educationHeight + 2 * dividerHeight);
+
   return (
     <div className="w-[210mm] h-[297mm] bg-gray-50">
       <Header data={personal} notifyHeight={(height) => setHeaderHeight(height)} />
