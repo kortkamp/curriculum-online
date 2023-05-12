@@ -7,6 +7,7 @@ import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form';
 import { curriculum } from '../page';
 import AppAccordion, { AppAccordionItem } from './components/Accordion';
 import AddButton from './components/AddButton';
+import Button from './components/Button';
 import Experience from './components/Experience';
 import Input from './components/Input';
 import RemoveButton from './components/RemoveButton';
@@ -180,7 +181,8 @@ export default function Home() {
             </AppAccordionItem>
           </AppAccordion>
 
-          <input type="submit" value="Salvar" className="text-primary-light" />
+          {/* <input type="submit" value="Salvar" className="text-primary-light" /> */}
+          <Button className="m-4">Imprimir</Button>
         </form>
       </div>
       <aside className="flex-1 overflow-y-scroll">

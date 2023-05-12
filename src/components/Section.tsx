@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useRef } from 'react';
 import clsx from 'clsx';
 import Text from './Text';
 
@@ -7,13 +7,20 @@ interface Props {
   children?: ReactNode
   variant?: 'standard' | 'aside'
   className?: string
+  notifyHeight? : (height: number)=> void
 }
 
 function Section({
-  title, children, variant = 'standard', className,
+  title, children, variant = 'standard', className, notifyHeight,
 }:Props) {
+  const ref = useRef<null | HTMLDivElement>(null);
+
+  const height = ref.current?.offsetHeight;
+  if (height && notifyHeight) {
+    notifyHeight(height);
+  }
   return (
-    <section className="flex flex-col">
+    <section className="flex flex-col" ref={ref}>
       <header className={
         clsx(
           'flex w-full pb-5 gap-4',

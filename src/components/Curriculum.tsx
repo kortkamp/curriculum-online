@@ -1,4 +1,5 @@
 import ICurriculum from '@/types/ICurriculum';
+import { useRef, useState } from 'react';
 import Divider from './Divider';
 import ExperienceItem from './ExperienceItem';
 import Header from './Header';
@@ -16,17 +17,28 @@ function Curriculum({ curriculum }: Props) {
     resume, experience, education, personal, skills, languages,
   } = curriculum;
 
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const [resumeHeight, setResumeHeight] = useState(0);
+  const [experienceHeight, setExperienceHeight] = useState(0);
+  const [educationHeight, setEducationHeight] = useState(0);
+  const [dividerHeight, setDividerHeight] = useState(0);
+
+  console.log(dividerHeight);
+  // console.log(resumeHeight);
+  // console.log(experienceHeight);
+  // console.log(educationHeight);
+  console.log(headerHeight + resumeHeight + experienceHeight + educationHeight + 2 * dividerHeight);
   return (
     <div className="w-[210mm] h-[297mm] bg-gray-50">
-      <Header data={personal} />
-      <main className="mt-10">
+      <Header data={personal} notifyHeight={(height) => setHeaderHeight(height)} />
+      <main className="">
         <SafeArea className="flex gap-2">
           <article className="w-2/3">
-            <Section title="Resumo" className="flex gap-10">
+            <Section title="Resumo" className="flex gap-10" notifyHeight={(height) => setResumeHeight(height)}>
               <Text>{resume}</Text>
             </Section>
-            <Divider />
-            <Section title="Experiência" className="flex gap-10">
+            <Divider notifyHeight={(height) => setDividerHeight(height)} />
+            <Section title="Experiência" className="flex gap-10" notifyHeight={(height) => setExperienceHeight(height)}>
               {
                 experience.map((item) => (
                   <ExperienceItem key={item.origin + item.title} experienceData={item} />
@@ -35,7 +47,7 @@ function Curriculum({ curriculum }: Props) {
             </Section>
             <Divider />
 
-            <Section title="Educação">
+            <Section title="Educação" notifyHeight={(height) => setEducationHeight(height)}>
               {education.map((item) => (
                 <div key={item.title + item.origin} className="flex flex-col">
                   <Text variant="subtitle">{item.title}</Text>
