@@ -1,5 +1,7 @@
 import ICurriculum from '@/types/ICurriculum';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { jsPDF } from 'jspdf';
+import Button from '@/app/edit/components/Button';
 import Divider from './Divider';
 import ExperienceItem from './ExperienceItem';
 import Header from './Header';
@@ -19,6 +21,24 @@ function Curriculum({ curriculum }: Props) {
     resume, experience, education, personal, skills, languages,
   } = curriculum;
 
+  const ref = useRef<null | HTMLDivElement>(null);
+
+  const handlePrint = () => {
+    // eslint-disable-next-line new-cap
+    const doc = new jsPDF();
+
+    doc.html(ref.current, {
+      callback(mdoc) {
+        mdoc.save();
+      },
+      x: 100,
+      y: 100,
+    });
+  };
+  useEffect(() => {
+    handlePrint();
+  }, []);
+
   const [headerHeight, setHeaderHeight] = useState(0);
   const [resumeHeight, setResumeHeight] = useState(0);
   const [experienceHeight, setExperienceHeight] = useState(0);
@@ -32,7 +52,7 @@ function Curriculum({ curriculum }: Props) {
   console.log(headerHeight + resumeHeight + experienceHeight + educationHeight + 2 * dividerHeight);
 
   return (
-    <div className="w-[210mm] h-[297mm] bg-gray-50">
+    <div className="w-[210mm] h-[297mm] bg-gray-50" ref={ref}>
       <Header data={personal} notifyHeight={(height) => setHeaderHeight(height)} />
       <main className="">
         <SafeArea className="flex gap-2">
@@ -76,6 +96,8 @@ function Curriculum({ curriculum }: Props) {
                 <Text key={language.title}>{language.title}</Text>
               ))}
             </Section>
+            <Button className="m-4" onClick={() => handlePrint()}>Imprimir</Button>
+
           </aside>
         </SafeArea>
       </main>
