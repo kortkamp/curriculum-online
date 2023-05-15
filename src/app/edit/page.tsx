@@ -4,7 +4,6 @@ import Curriculum from '@/components/Curriculum';
 import ICurriculum from '@/types/ICurriculum';
 import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form';
 
-import { jsPDF } from 'jspdf';
 import { useRef } from 'react';
 import { curriculum } from '../page';
 import AppAccordion, { AppAccordionItem } from './components/Accordion';
@@ -28,18 +27,6 @@ const optionalPersonalFields = [
 export default function Home() {
   const curriculumRef = useRef<null | HTMLDivElement>(null);
 
-  const handlePrint = () => {
-    // eslint-disable-next-line new-cap
-    const doc = new jsPDF();
-
-    doc.html(document.body, {
-      callback(mdoc) {
-        mdoc.save();
-      },
-      x: 10,
-      y: 10,
-    });
-  };
   const {
     register, handleSubmit, watch, control,
   } = useForm<ICurriculum>({

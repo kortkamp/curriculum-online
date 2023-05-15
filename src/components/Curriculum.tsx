@@ -1,7 +1,8 @@
 import ICurriculum from '@/types/ICurriculum';
 import { useEffect, useRef, useState } from 'react';
-import { jsPDF } from 'jspdf';
 import Button from '@/app/edit/components/Button';
+import { useReactToPrint } from 'react-to-print';
+import Html2Pdf from 'html2pdf.js';
 import Divider from './Divider';
 import ExperienceItem from './ExperienceItem';
 import Header from './Header';
@@ -23,21 +24,19 @@ function Curriculum({ curriculum }: Props) {
 
   const ref = useRef<null | HTMLDivElement>(null);
 
-  const handlePrint = () => {
-    // eslint-disable-next-line new-cap
-    const doc = new jsPDF();
-
-    doc.html(ref.current, {
-      callback(mdoc) {
-        mdoc.save();
-      },
-      x: 100,
-      y: 100,
-    });
-  };
-  useEffect(() => {
-    handlePrint();
-  }, []);
+  const handlePrint = useReactToPrint({
+    content: () => ref.current,
+    fonts: [{ family: 'Poppins', source: 'https://fonts.gstatic.com/s/poppins/v20/pxiByp8kv8JHgFVrLEj6Z11lFc-K.woff2' }],
+    print: async (printIframe) => {
+      const document = printIframe.contentDocument;
+      // if (document) {
+      //   const html = document.getElementsByTagName('html')[0];
+      //   console.log(html);
+      //   const exporter = new Html2Pdf(html);
+      //   await exporter.getPdf(true);
+      // }
+    },
+  });
 
   const [headerHeight, setHeaderHeight] = useState(0);
   const [resumeHeight, setResumeHeight] = useState(0);
@@ -73,6 +72,7 @@ function Curriculum({ curriculum }: Props) {
             <Section title="Educação" notifyHeight={(height) => setEducationHeight(height)}>
               {education.map((item) => (
                 <div key={item.title + item.origin} className="flex flex-col">
+                  <div className="page-break" />
                   <Text variant="subtitle">{item.title}</Text>
                   <Text variant="light">{item.origin}</Text>
                 </div>
