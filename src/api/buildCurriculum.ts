@@ -5,7 +5,7 @@ const buildPDF = (curriculum: ICurriculum) => {
   const pdf = new JsPDF('p', 'mm');
 
   pdf.setFontSize(40);
-  pdf.text(curriculum.personal?.name || '', 35, 25);
+  pdf.text(curriculum.personal?.name || '', 35, 25, { maxWidth: 100, align: 'left' });
   pdf.setFontSize(20);
 
   return window.btoa(pdf.output());

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-const useCache = < T extends (curriculum:any)=> any>
+const useCache = < T extends (arg:any)=> any>
   (callback: T, timeout: number = 2000) => {
   const [argumentData, setArgumentData] = useState<Parameters<T>[0]>();
 
@@ -13,15 +13,22 @@ const useCache = < T extends (curriculum:any)=> any>
   const updateRequest = (arg: Parameters<T>[0]) => setArgumentData(arg);
 
   useEffect(() => {
+    let timer: number;
     const currentTime = (new Date()).getTime();
-    if (currentTime < triggerTime) return;
-    setTimeout(() => {
-      if (memoData) {
+    if (!memoData) return () => {};
+
+    if (currentTime > triggerTime + timeout) {
+      setResultData(callback(memoData));
+      setTriggerTime(currentTime);
+    } else {
+      const remainingTime = triggerTime + timeout - currentTime;
+      timer = window.setTimeout(() => {
         setResultData(callback(memoData));
-      }
-    }, timeout);
-    setTriggerTime(currentTime + timeout);
-  }, [memoData, timeout, callback, triggerTime]);
+        setTriggerTime(currentTime);
+      }, remainingTime);
+    }
+    return () => { clearTimeout(timer); };
+  }, [memoData, timeout, callback]);
 
   return { resultData, updateRequest };
 };

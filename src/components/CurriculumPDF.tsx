@@ -19,7 +19,7 @@ function CurriculumPDF({ curriculum }:Props) {
     <div className="h-full">
       <embed
         className="pdfobject"
-        src={`data:application/pdf; filename=generated.pdf; base64,${resultData}`}
+        src={resultData && `data:application/pdf; filename=generated.pdf; base64,${resultData}`}
         type="application/pdf"
         style={{
           overflow: 'auto', width: '100%', height: '100%',
