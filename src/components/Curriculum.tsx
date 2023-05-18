@@ -1,15 +1,12 @@
 import ICurriculum from '@/types/ICurriculum';
 import { useEffect, useRef, useState } from 'react';
-import Button from '@/app/edit/components/Button';
-import { useReactToPrint } from 'react-to-print';
-import Html2Pdf from 'html2pdf.js';
-import Divider from './Divider';
 import ExperienceItem from './ExperienceItem';
 import Header from './Header';
 import Personal from './Personal';
 import SafeArea from './SafeArea';
 import Section from './Section';
 import Text from './Text';
+import Divider from './Divider';
 
 const pageHeight = 1122; // A4 page
 
@@ -24,20 +21,6 @@ function Curriculum({ curriculum }: Props) {
 
   const ref = useRef<null | HTMLDivElement>(null);
 
-  const handlePrint = useReactToPrint({
-    content: () => ref.current,
-    fonts: [{ family: 'Poppins', source: 'https://fonts.gstatic.com/s/poppins/v20/pxiByp8kv8JHgFVrLEj6Z11lFc-K.woff2' }],
-    print: async (printIframe) => {
-      const document = printIframe.contentDocument;
-      // if (document) {
-      //   const html = document.getElementsByTagName('html')[0];
-      //   console.log(html);
-      //   const exporter = new Html2Pdf(html);
-      //   await exporter.getPdf(true);
-      // }
-    },
-  });
-
   const [headerHeight, setHeaderHeight] = useState(0);
   const [resumeHeight, setResumeHeight] = useState(0);
   const [experienceHeight, setExperienceHeight] = useState(0);
@@ -51,7 +34,7 @@ function Curriculum({ curriculum }: Props) {
   console.log(headerHeight + resumeHeight + experienceHeight + educationHeight + 2 * dividerHeight);
 
   return (
-    <div className="w-[210mm] h-[297mm] bg-gray-50" ref={ref}>
+    <div className="w-[210mm] h-[297mm] bg-gray-50 __className_1a96a6" ref={ref}>
       <Header data={personal} notifyHeight={(height) => setHeaderHeight(height)} />
       <main className="">
         <SafeArea className="flex gap-2">
@@ -96,7 +79,6 @@ function Curriculum({ curriculum }: Props) {
                 <Text key={language.title}>{language.title}</Text>
               ))}
             </Section>
-            <Button className="m-4" onClick={() => handlePrint()}>Imprimir</Button>
 
           </aside>
         </SafeArea>

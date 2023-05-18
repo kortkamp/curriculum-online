@@ -2,7 +2,7 @@ import './globals.css';
 import { Poppins } from 'next/font/google';
 import { CurriculumContextProvider } from '@/context/curriculum.context';
 
-const poppins = Poppins({ subsets: ['latin'], weight: ['400', '500', '600', '700'] });
+const poppins = Poppins({ subsets: ['latin'], weight: ['400', '500', '600', '800'] });
 
 export const metadata = {
   title: 'Curriculum',
@@ -14,7 +14,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  console.log(poppins);
   return (
     <html lang="en">
       <body className={poppins.className}>

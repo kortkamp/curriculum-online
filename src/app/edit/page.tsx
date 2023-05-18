@@ -5,6 +5,7 @@ import ICurriculum from '@/types/ICurriculum';
 import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form';
 
 import { useRef } from 'react';
+import CurriculumPDF from '@/components/CurriculumPDF';
 import { curriculum } from '../page';
 import AppAccordion, { AppAccordionItem } from './components/Accordion';
 import AddButton from './components/AddButton';
@@ -185,14 +186,15 @@ export default function Home() {
           </AppAccordion>
 
           {/* <input type="submit" value="Salvar" className="text-primary-light" /> */}
-          <Button className="m-4" onClick={() => handlePrint()}>Imprimir</Button>
+          <Button className="m-4">Imprimir</Button>
         </form>
       </div>
-      <aside className="flex-1 overflow-y-scroll flex">
-        <div className="scale-[0.6] m-auto">
-          <div className="shadow-lg">
-            <Curriculum curriculum={watch()} />
-          </div>
+      <aside className="flex-1 ">
+        <div className="m-auto h-full">
+
+          {/* <Curriculum curriculum={watch()} /> */}
+          <CurriculumPDF curriculum={watch()} />
+
         </div>
       </aside>
     </div>
