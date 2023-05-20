@@ -19,10 +19,10 @@ function CurriculumPDF({ curriculum }:Props) {
   // const data2 = buildPDF(curriculum);
   return (
     <div className="h-full">
-      <embed
+      <iframe
+        title="Currículo"
         className="pdfobject"
-        src={resultData && `data:application/pdf; filename=generated.pdf; base64,${window.btoa(resultData)}`}
-        type="application/pdf"
+        src={resultData && `data:application/pdf; filename=generated.pdf; base64,${window.btoa(resultData)}#zoom=fit`}
         style={{
           overflow: 'auto', width: '100%', height: '100%',
         }}
