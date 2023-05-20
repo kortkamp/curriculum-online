@@ -59,6 +59,12 @@ class Framework {
 
   public defaultFont: IFont;
 
+  public height: number;
+
+  public width: number;
+
+  public maxHeight: number;
+
   public maxWidth: number;
 
   private pdf: jsPDF;
@@ -139,6 +145,8 @@ const buildPDF = (curriculum: ICurriculum) => {
   const pdf = new JsPDF('p', 'mm');
 
   const document = new Framework(pdf, {});
+
+  pdf.addPage();
 
   // pdf.addPage();
 
