@@ -20,8 +20,9 @@ const colorSchema = {
   },
 };
 
-const DRAW_MARGIN = true;
-const DRAW_PADDING = true;
+const MINIMUM_VALUE_TO_PREVENT_LINE_BREAK_BUG = 0.01;
+
+const defaultFont = { color: 'black', size: 16, family: 'helvetica' };
 
 const defaultPadding = { x: 10, y: 10 };
 
@@ -38,6 +39,7 @@ interface IDimension {
 
 type Direction = 'v' | 'h';
 type Justify = 'start' | 'end' | 'center' | 'between';
+type Align = 'start' | 'middle' | 'end';
 interface IFrameworkOptions {
   name: string
   position?: ICoordinate
@@ -46,7 +48,7 @@ interface IFrameworkOptions {
   margin?: ICoordinate
   padding?: ICoordinate
   page?: IDimension
-  font?: IFont
+  font?: Partial<IFont>
   height?: number
   maxHeight?: number
   maxWidth?: number
@@ -54,6 +56,8 @@ interface IFrameworkOptions {
   fullWidth?: boolean
   direction?: Direction
   justify?: Justify
+  align?: Align
+  gap?: number
   children?: IFrameworkOptions[]
   text?:string
 }
@@ -87,6 +91,10 @@ class Framework {
   public direction: Direction;
 
   public justify: Justify;
+
+  public gap: number;
+
+  public align: Align;
 
   public currentPage = 1;
 
@@ -126,9 +134,11 @@ class Framework {
       margin = { x: 0, y: 0 },
       direction = 'v',
       justify = 'start',
+      align = 'start',
+      gap = 0,
       bgColor,
       page = { h: 297, w: 210 },
-      font = { color: 'black', size: 16, family: 'helvetica' },
+      font,
       height,
       width,
       maxHeight,
@@ -151,10 +161,18 @@ class Framework {
 
     this.direction = direction;
     this.justify = justify;
+    this.align = align;
+    this.gap = 0;
 
     this.lineSpacing = 1;
     this.wordSpacing = 1;
-    this.font = font;
+
+    this.font = {
+      color: font?.color || defaultFont.color,
+      size: font?.size || defaultFont.size,
+      family: font?.family || defaultFont.family,
+    };
+
     this.bgColor = bgColor;
 
     this.text = text;
@@ -164,13 +182,11 @@ class Framework {
 
     this.fullWidth = fullWidth;
 
-    console.log(`creating ${this.name} width ${this.width} height:${this.height} maxWidth:${this.maxWidth} `);
+    this.height = height || 0;
 
     this.buildChildren(children);
 
     const contentDimensions = this.getContentDimensions();
-
-    console.log(`${this.name} contentDimensions ${JSON.stringify(contentDimensions)}`);
 
     this.height = height || contentDimensions.h;
     this.width = fullWidth ? this.maxWidth : (width || contentDimensions.w);
@@ -183,7 +199,7 @@ class Framework {
     this.setBackgroundStyle();
     this.setFont();
     if (this.text) {
-      this.write(this.text);
+      this.write();
     }
     if (this.children.length) {
       this.children.forEach((child) => { child.render(); });
@@ -192,7 +208,6 @@ class Framework {
 
   setBackgroundStyle() {
     if (!this.bgColor) return;
-    console.log('setting bgColor');
     this.pdf.setDrawColor(this.bgColor);
     this.pdf.setFillColor(this.bgColor);
     this.pdf.rect(
@@ -200,57 +215,6 @@ class Framework {
       this.position.y + this.margin.y,
       this.width - 2 * this.margin.x,
       this.height - 2 * this.margin.y,
-      'F',
-    );
-  }
-
-  drawMargin() {
-    if (!DRAW_MARGIN) return;
-    const marginColor = '#ffaa22';
-    this.pdf.setDrawColor(marginColor);
-    this.pdf.setFillColor(marginColor);
-    this.pdf.rect(this.position.x, this.position.y, this.width, this.height, 'F');
-
-    this.pdf.setDrawColor(this.bgColor || 'white');
-    this.pdf.setFillColor(this.bgColor || 'white');
-    this.pdf.rect(
-      this.position.x + this.margin.x,
-      this.position.y + this.margin.y,
-      this.width - 2 * this.margin.x,
-      this.height - 2 * this.margin.y,
-      'F',
-    );
-  }
-
-  drawPadding() {
-    if (!DRAW_PADDING) return;
-
-    // console.log(
-    //   this.name,
-    //   this.position.x + this.margin.x,
-    //   this.position.y + this.margin.y,
-    //   this.width - this.margin.x,
-    //   this.height - this.margin.y,
-    // );
-
-    const marginColor = '#88ff88';
-    this.pdf.setDrawColor(marginColor);
-    this.pdf.setFillColor(marginColor);
-    this.pdf.rect(
-      this.position.x + this.margin.x,
-      this.position.y + this.margin.y,
-      this.width - 2 * this.margin.x,
-      this.height - 2 * this.margin.y,
-      'F',
-    );
-
-    this.pdf.setDrawColor(this.bgColor || 'white');
-    this.pdf.setFillColor(this.bgColor || 'white');
-    this.pdf.rect(
-      this.position.x + this.margin.x + this.padding.x,
-      this.position.y + this.margin.y + this.padding.y,
-      this.width - 2 * this.margin.x - 2 * this.padding.x,
-      this.height - 2 * this.margin.y - 2 * this.padding.y,
       'F',
     );
   }
@@ -278,7 +242,7 @@ class Framework {
     }
 
     const textDimensions = this.pdf.getTextDimensions(this.text, {
-      // font: 'courier',
+      font: this.font.family,
       fontSize: this.font.size,
       maxWidth: (this.maxWidth) - this.cursor.x - 2 * this.margin.x - 2 * this.padding.x,
     });
@@ -357,49 +321,102 @@ class Framework {
       return;
     }
 
-    const freeWidth = (this.width || this.maxWidth) - 2 * this.margin.x - 2 * this.padding.x;
+    let parentWidth = (this.width || this.maxWidth) - 2 * this.margin.x - 2 * this.padding.x;
 
-    const freeHeight = this.height - 2 * this.margin.y - 2 * this.padding.y;
+    let parentHeight = this.height ? this.height - 2 * this.margin.y - 2 * this.padding.y : 0;
 
     childrenData.forEach((childData) => {
-      this.addChild({ ...childData, maxWidth: childData.maxWidth || freeWidth });
+      this.addChild({ ...childData, maxWidth: childData.maxWidth || parentWidth });
     });
+
+    let justifyStartValue = 0;
+    let justifyBetweenValue = 0;
+    let justifyEndValue = 0;
+
+    let justifyFreeSpace = 0;
+
+    let alignStartValue = 0;
+    let alignChildFactor = 1;
+    let alignTotalSpace = 0;
 
     let childrenWidth;
     let childrenHeight;
+
     if (this.direction === 'h') {
-      childrenWidth = this.children.reduce((total, child) => (total + child.width), 0);
-      childrenHeight = this.children.reduce((total, child) => (
-        child.height > total ? child.height : total), 0);
+      // horizontal
+      childrenWidth = this.children.reduce((totalWidth, child) => (totalWidth + child.width), 0);
+      childrenHeight = this.children.reduce((tallerChild, child) => (
+        child.height > tallerChild ? child.height : tallerChild), 0);
+
+      parentWidth = parentWidth || childrenWidth;
+      parentHeight = parentHeight || childrenHeight;
+      justifyFreeSpace = parentWidth - childrenWidth;
+      alignTotalSpace = parentHeight || childrenHeight;
     } else {
-      childrenWidth = this.children.reduce((total, child) => (
-        child.width > total ? child.width : total), 0);
-      childrenHeight = this.children.reduce((total, child) => (total + child.height), 0);
+      // vertical
+      childrenWidth = this.children.reduce((widerChild, child) => (
+        child.width > widerChild ? child.width : widerChild), 0);
+      childrenHeight = this.children.reduce(
+        (totalHeight, child) => (totalHeight + child.height),
+        0,
+      );
+      parentWidth = parentWidth || childrenWidth;
+      parentHeight = parentHeight || childrenHeight;
+      justifyFreeSpace = parentHeight - childrenHeight;
+      alignTotalSpace = parentWidth;
     }
 
-
-    /aqui devemos calcular um vetor de acordo com a orientaçao do parent
-
-    const remainingWidth = freeWidth - childrenWidth;
-
-    // apply justification
-    const numberOfSpaces = this.children.length - 1;
-    const betweenWidth = remainingWidth / numberOfSpaces;
-    const startFreeSpace = remainingWidth / 2;
-    switch (this.justify) {
-      case 'between':
-        this.children.forEach((child, index) => { child.position.x += index * betweenWidth; });
+    switch (this.align) {
+      case 'start':
+        alignStartValue = 0;
+        alignChildFactor = 0;
         break;
-      case 'center':
-        this.children.forEach((child) => { child.position.x += startFreeSpace; });
+      case 'middle':
+        alignStartValue = alignTotalSpace / 2;
+        alignChildFactor = 0.5;
+
         break;
       case 'end':
-        this.children.forEach((child) => { child.position.x += remainingWidth; });
+        alignStartValue = alignTotalSpace;
+        alignChildFactor = 1;
         break;
-
       default:
         break;
     }
+
+    switch (this.justify) {
+      case 'start':
+        justifyStartValue = 0;
+        break;
+      case 'center':
+        justifyStartValue = justifyFreeSpace / 2;
+        justifyEndValue = justifyStartValue;
+        break;
+      case 'end':
+        justifyStartValue = justifyFreeSpace;
+        break;
+      case 'between':
+        justifyBetweenValue = justifyFreeSpace / (this.children.length - 1);
+        break;
+      default:
+        break;
+    }
+
+    if (this.direction === 'h') {
+      this.children.forEach((child, index) => {
+        child.position.x += (justifyStartValue + index * justifyBetweenValue);
+        child.position.y += alignStartValue - alignChildFactor * child.height;
+      });
+    } else {
+      this.children.forEach((child, index) => {
+        child.position.y += (justifyStartValue + index * justifyBetweenValue);
+        child.position.x += alignStartValue - alignChildFactor * child.width;
+      });
+    }
+
+    // /aqui devemos calcular um vetor de acordo com a orientaçao do parent
+
+    const remainingWidth = parentWidth - childrenWidth;
 
     // apply fullWidth
     const fullWidthChild = this.children.find(
@@ -436,12 +453,11 @@ class Framework {
     return foundNode;
   }
 
-  write(text: string = '', options?: IWriteOptions) {
-    const textDimensions = this.pdf.getTextDimensions(text, {
-      font: options?.font?.family,
-      fontSize: options?.font?.size,
-      maxWidth: this.width - this.cursor.x - 2 * this.margin.x - 2 * this.padding.x,
-    });
+  write(options?: IWriteOptions) {
+    if (!this.text) {
+      return;
+    }
+    const textDimensions = this.getTextDimension();
 
     const writableBottomLimit = this.height - 2 * this.margin.y;
 
@@ -458,11 +474,20 @@ class Framework {
     }
 
     this.pdf.setPage(this.currentPage);
+
     this.pdf.text(
-      text,
+      this.text,
       this.cursor.x + this.margin.x + this.position.x + this.padding.x,
       this.cursor.y + this.margin.y + this.position.y + this.padding.y,
-      { baseline: 'top', maxWidth: this.width - this.cursor.x - 2 * this.margin.x - 2 * this.padding.x },
+      {
+        baseline: 'top',
+        maxWidth:
+         this.width
+         - this.cursor.x
+         - 2 * this.margin.x
+         - 2 * this.padding.x
+         + MINIMUM_VALUE_TO_PREVENT_LINE_BREAK_BUG,
+      },
     );
 
     if (this.direction === 'v') {
@@ -475,8 +500,6 @@ class Framework {
 
 const buildPDF = (curriculum: ICurriculum) => {
   const pdf = new JsPDF('p', 'mm');
-
-  console.log('-----------------------------');
 
   const document = new Framework(pdf, {
     height: pageDimensions.h,
@@ -496,15 +519,16 @@ const buildPDF = (curriculum: ICurriculum) => {
           {
             name: 'name',
             text: 'This is my nane',
-            bgColor: 'red',
+            font: { color: 'white', size: 16 },
+            // bgColor: 'red',
             // fullWidth: true,
 
             // font: { size: 20, color: 'white', family: 'helvetica' },
           },
           {
             name: 'title',
-            text: 'This is my title',
-            bgColor: 'yellow',
+            text: 'This is my tittle',
+            // bgColor: 'yellow',
           },
         ],
       },
@@ -515,17 +539,18 @@ const buildPDF = (curriculum: ICurriculum) => {
         padding: { x: 10, y: 10 },
         bgColor: 'violet',
         fullWidth: true,
-        // text: 'this is the MAIN',
-        justify: 'end',
+        justify: 'between',
+        align: 'middle',
+        // height: 100,
         children: [
           {
-            name: 'content', margin: { x: 0, y: 0 }, bgColor: '#116699', text: 'CONTENT',
+            name: 'content', margin: { x: 0, y: 0 }, bgColor: '#116699', text: 'CONTENT', font: { size: 50 },
           },
           {
             name: 'content2', margin: { x: 0, y: 0 }, bgColor: '#116699', text: 'CONTENT2',
           },
           {
-            name: 'aside', height: 20, margin: { x: 0, y: 0 }, bgColor: '#005544', text: 'ASIDE', fullWidth: false,
+            name: 'aside', height: 40, margin: { x: 0, y: 0 }, bgColor: '#005544', text: 'ASIDE', fullWidth: false,
           },
         ],
       },
@@ -533,65 +558,6 @@ const buildPDF = (curriculum: ICurriculum) => {
   });
 
   document.render();
-
-  // const header = document.findNode('header');
-  // const content = document.findNode('content');
-  // const aside = document.findNode('aside');
-
-  // header?.write('HEADER aksjdh kjha hdkasj h h h aksjdh  hh aksjd  dhaksjd  aksjd  hd hk aj sh h hk jhk jh kj  hkj h');
-  // header?.write('HEADER aksjdh kjha hdkasj h h h aksjdh  hh aksjd  dhaksjd  aksjd  hd hk aj sh h hk jhk jh kj  hkj h');
-
-  // console.log(content);
-
-  // const aside = document.getChild('main').getChild('aside');
-
-  // document.addChild({
-  //   name: 'child1', width: 100, height: 200, margin: { x: 0, y: 0 }, bgColor: '#aa5544',
-  // });
-  // document.addChild({
-  //   name: 'child2', width: 800, height: 200, margin: { x: 0, y: 0 }, bgColor: '#005544',
-  // });
-
-  // document.buildChildren([
-  //   {
-  //     name: 'child1', width: 30, height: 200, margin: { x: 0, y: 0 }, bgColor: '#aa5544',
-  //   },
-  //   {
-  //     name: 'child2', height: 200, margin: { x: 0, y: 0 }, bgColor: '#005544',
-  //   },
-  // ]);
-
-  // pdf.addPage();
-
-  // pdf.addPage();
-
-  // header
-  // pdf.setDrawColor(colorSchema.background.primary);
-  // pdf.setFillColor(colorSchema.background.primary);
-  // pdf.rect(0, 0, 210, 42, 'F');
-
-  // pdf.setFontSize(24);
-  // pdf.setTextColor(colorSchema.neutral.DEFAULT);
-  // pdf.setFont('Poppins-Medium');
-
-  // pdf.addPage();
-  // pdf.setPage(1);
-  // pdf.setTextColor(colorSchema.text.contrast.light);
-  // pdf.setFontSize(12);
-  // pdf.setFont('Poppins-Regular');
-  // content?.write('CONTENT');
-  // aside?.write('ASIDE');
-  // const a = 'Desenvolvedor Fullstack lfksdjf lskjdfl ksjdfl a z kjsldfk jsldkfj sldk fjsld kfjs lkdfj slk Desenvolvedor Fullstack fsj dfjj oiu   uoiuoiu';
-  // // document.cursor = { x: 100, y: 0 };
-  // for (let i = 0; i < 40; i += 1) {
-  //   content?.write(`a-${i} - ${a}`);
-  // }
-  // for (let i = 0; i < 40; i += 1) {
-  //   aside?.write(`b-${i} - ${a}`);
-  // }
-  // document.write(`${curriculum.personal?.title}` || '');
-  // document.write(`${curriculum.personal?.title}` || '');
-  // document.write(`${curriculum.personal?.title}` || '');
 
   return pdf.output();
 };
