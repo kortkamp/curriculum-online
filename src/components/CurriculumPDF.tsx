@@ -3,8 +3,6 @@ import useCache from '@/hooks/useCache';
 import ICurriculum from '@/types/ICurriculum';
 import { useEffect } from 'react';
 
-import '../assets/Poppins-normal';
-
 interface Props {
   curriculum: ICurriculum
 }
