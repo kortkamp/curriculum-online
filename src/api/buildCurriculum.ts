@@ -1,5 +1,6 @@
 import ICurriculum from '@/types/ICurriculum';
 import jsPDF, { jsPDF as JsPDF } from 'jspdf';
+import { text } from 'stream/consumers';
 
 import '../assets/Poppins-Regular-normal';
 // import '../assets/Poppins-Medium-normal';
@@ -165,7 +166,7 @@ class Framework {
     this.direction = direction;
     this.justify = justify;
     this.align = align;
-    this.gap = 0;
+    this.gap = gap;
 
     this.lineSpacing = 1;
     this.wordSpacing = 1;
@@ -292,10 +293,10 @@ class Framework {
 
   addChild(childData: IFrameworkOptions) {
     // console.log(childData);
-    const foundChild = this.children.find((existentChild) => existentChild.name === childData.name);
-    if (foundChild) {
-      throw new Error('Child name already exists');
-    }
+    // const foundChild = this.children.find((existentChild) => existentChild.name === childData.name);
+    // if (foundChild) {
+    //   throw new Error('Child name already exists');
+    // }
 
     const child = new Framework(
       this.pdf,
@@ -336,8 +337,10 @@ class Framework {
       this.addChild({ ...childData, maxWidth: childData.maxWidth || parentWidth });
     });
 
+    const numberOfGaps = childrenData.length - 1;
+
     let justifyStartValue = 0;
-    let justifyBetweenValue = 0;
+    let justifyBetweenValue = this.gap;
     let justifyEndValue = 0;
 
     let justifyFreeSpace = 0;
@@ -357,7 +360,7 @@ class Framework {
 
       parentWidth = parentWidth || childrenWidth;
       parentHeight = parentHeight || childrenHeight;
-      justifyFreeSpace = parentWidth - childrenWidth;
+      justifyFreeSpace = parentWidth - childrenWidth - numberOfGaps * this.gap;
       alignTotalSpace = parentHeight || childrenHeight;
     } else {
       // vertical
@@ -369,7 +372,7 @@ class Framework {
       );
       parentWidth = parentWidth || childrenWidth;
       parentHeight = parentHeight || childrenHeight;
-      justifyFreeSpace = parentHeight - childrenHeight;
+      justifyFreeSpace = parentHeight - childrenHeight - numberOfGaps * this.gap;
       alignTotalSpace = parentWidth;
     }
 
@@ -508,7 +511,51 @@ class Framework {
 const buildPDF = (curriculum: ICurriculum, font = '') => {
   const pdf = new JsPDF('p', 'mm');
 
-  const document = new Framework(pdf, {
+  const contentItem = (
+    title:string,
+    sub:string,
+    content:string = '',
+    aside:string = '',
+  ) => {
+    const result:IFrameworkOptions = {
+      name: title,
+      margin: { x: 0, y: 2 },
+      font: { size: 10 },
+      gap: 4,
+      children: [
+        {
+          name: 'header',
+          justify: 'between',
+          children: [
+            {
+              name: 'title',
+              text: title,
+              // bold
+            },
+            {
+              name: 'aside',
+              text: aside,
+            },
+          ],
+        },
+        {
+          name: 'sub',
+          font: { color: '#8f8f8f' },
+          text: sub,
+        },
+        {
+          name: 'content',
+          text: content,
+        },
+      ],
+    };
+
+    return result;
+  };
+
+  const education = curriculum.education.map((item) => contentItem(item.title, `${item.origin} ${item.city}`, item.description));
+
+  const data: IFrameworkOptions = {
     height: pageDimensions.h,
     width: pageDimensions.w,
     name: 'body',
@@ -516,27 +563,45 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
     children: [
       {
         name: 'header',
-        // height: 60,
-        // width: 200,
         bgColor: colorSchema.primary,
-        padding: { x: 4, y: 4 },
+        padding: { x: 10, y: 10 },
         fullWidth: true,
-        font: { family: font },
-        // margin: { x: 4, y: 4 },
+        font: { family: font, weight: 'normal', color: colorSchema.text.contrast.default },
         children: [
           {
             name: 'name',
-            text: 'This is my nane árt',
-            font: { color: 'white', size: 16 },
-            bgColor: 'red',
-            // fullWidth: true,
-
-            // font: { size: 20, color: 'white', family: 'helvetica' },
+            text: 'Marcelo Teixeira',
+            font: { size: 30, weight: 'normal' },
           },
           {
             name: 'title',
-            text: 'This is my tittle',
-            // bgColor: 'yellow',
+            text: 'Desenvolvedor FullStack',
+            font: { size: 14, color: colorSchema.text.contrast.light },
+            margin: { x: 0, y: 3 },
+          },
+          {
+            name: 'divider',
+            margin: { x: 0, y: 2 },
+          },
+          {
+            name: 'links',
+            direction: 'h',
+            justify: 'between',
+            font: { size: 12, color: colorSchema.text.contrast.light },
+            children: [
+              {
+                name: 'mail',
+                text: 'marcelusmedius@gmail.com',
+              },
+              {
+                name: 'phone',
+                text: '(22) 99708-8801',
+              },
+              {
+                name: 'address',
+                text: 'Aperibé - RJ',
+              },
+            ],
           },
         ],
       },
@@ -544,26 +609,32 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
         name: 'main',
         direction: 'h',
         margin: { x: 10, y: 10 },
-        padding: { x: 10, y: 10 },
-        bgColor: 'violet',
         fullWidth: true,
         justify: 'between',
-        align: 'middle',
-        // height: 100,
+        align: 'start',
         children: [
           {
-            name: 'content', margin: { x: 0, y: 0 }, bgColor: '#116699', text: 'CONTENTa..', font: { size: 50, family: 'poppins' },
+            name: 'content',
+            width: 120,
+            margin: { x: 0, y: 0 },
+            // bgColor: '#116699',
+            // text: 'CONTENTa..',
+            children: education,
           },
           {
-            name: 'content2', margin: { x: 0, y: 0 }, bgColor: '#116699', text: 'CONTENT2',
-          },
-          {
-            name: 'aside', height: 40, margin: { x: 0, y: 0 }, bgColor: '#005544', text: 'ASIDE', fullWidth: false,
+            name: 'aside',
+            width: 53,
+            margin: { x: 0, y: 0 },
+            bgColor: '#005544',
+            text: 'ASIDE',
+            fullWidth: false,
           },
         ],
       },
     ],
-  });
+  };
+
+  const document = new Framework(pdf, data);
 
   document.render();
 
