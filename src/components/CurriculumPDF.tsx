@@ -1,7 +1,8 @@
 import buildPDF from '@/api/buildCurriculum';
 import useCache from '@/hooks/useCache';
 import ICurriculum from '@/types/ICurriculum';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import jsPDF, { jsPDF as JsPDF } from 'jspdf';
 
 interface Props {
   curriculum: ICurriculum
@@ -10,13 +11,26 @@ interface Props {
 function CurriculumPDF({ curriculum }:Props) {
   const { resultData, updateRequest } = useCache(buildPDF);
 
+  const [font, setFont] = useState('arial');
+
+  const pdf = new JsPDF('p', 'mm');
+
+  // console.log('getStringUnitWidth ', pdf.getStringUnitWidth('asd', { font: 'helvetica' }));
+
   useEffect(() => {
-    updateRequest(curriculum);
+    updateRequest(curriculum, font);
   }, [curriculum, updateRequest]);
 
   // const data2 = buildPDF(curriculum);
   return (
     <div className="h-full">
+      <select name="" id="" value={font} onChange={(e) => setFont(e.target.value)}>
+
+        {Object.keys(pdf.getFontList()).map((item) => (
+          <option key={item} value={item}>{item}</option>
+        ))}
+
+      </select>
       <iframe
         title="Currículo"
         className="pdfobject"

@@ -1,7 +1,7 @@
 import ICurriculum from '@/types/ICurriculum';
 import jsPDF, { jsPDF as JsPDF } from 'jspdf';
 
-// import '../assets/Poppins-Regular-normal';
+import '../assets/Poppins-Regular-normal';
 // import '../assets/Poppins-Medium-normal';
 
 const colorSchema = {
@@ -22,7 +22,9 @@ const colorSchema = {
 
 const MINIMUM_VALUE_TO_PREVENT_LINE_BREAK_BUG = 0.01;
 
-const defaultFont = { color: 'black', size: 16, family: 'helvetica' };
+const defaultFont = {
+  color: 'black', size: 16, family: 'poppins', weight: 'normal',
+};
 
 const defaultPadding = { x: 10, y: 10 };
 
@@ -64,7 +66,8 @@ interface IFrameworkOptions {
 interface IFont {
   size: number,
   color: string,
-  family: string
+  family: string,
+  weight: string
 }
 interface IWriteOptions {
   font?: Partial<IFont>
@@ -171,6 +174,7 @@ class Framework {
       color: font?.color || defaultFont.color,
       size: font?.size || defaultFont.size,
       family: font?.family || defaultFont.family,
+      weight: font?.weight || defaultFont.weight,
     };
 
     this.bgColor = bgColor;
@@ -190,9 +194,6 @@ class Framework {
 
     this.height = height || contentDimensions.h;
     this.width = fullWidth ? this.maxWidth : (width || contentDimensions.w);
-
-    // this.drawMargin();
-    // this.drawPadding();
   }
 
   render() {
@@ -222,7 +223,7 @@ class Framework {
   setFont() {
     this.pdf.setFontSize(this.font.size);
     this.pdf.setTextColor(this.font.color);
-    this.pdf.setFont(this.font.family);
+    this.pdf.setFont(this.font.family, this.font.weight);
   }
 
   page(index: number) {
@@ -240,9 +241,9 @@ class Framework {
     if (!this.text) {
       return { w: 0, h: 0 };
     }
-
+    this.setFont();
     const textDimensions = this.pdf.getTextDimensions(this.text, {
-      font: this.font.family,
+      // font: this.pdf.getFont().fontName,
       fontSize: this.font.size,
       maxWidth: (this.maxWidth) - this.cursor.x - 2 * this.margin.x - 2 * this.padding.x,
     });
@@ -303,6 +304,12 @@ class Framework {
         position: {
           x: this.position.x + this.cursor.x + this.margin.x + this.padding.x,
           y: this.position.y + this.cursor.y + this.margin.y + this.padding.y,
+        },
+        font: {
+          family: childData.font?.family || this.font.family,
+          size: childData.font?.size || this.font.size,
+          color: childData.font?.color || this.font.color,
+          weight: childData.font?.weight || this.font.weight,
         },
       },
     );
@@ -453,7 +460,7 @@ class Framework {
     return foundNode;
   }
 
-  write(options?: IWriteOptions) {
+  write() {
     if (!this.text) {
       return;
     }
@@ -498,7 +505,7 @@ class Framework {
   }
 }
 
-const buildPDF = (curriculum: ICurriculum) => {
+const buildPDF = (curriculum: ICurriculum, font = '') => {
   const pdf = new JsPDF('p', 'mm');
 
   const document = new Framework(pdf, {
@@ -514,13 +521,14 @@ const buildPDF = (curriculum: ICurriculum) => {
         bgColor: colorSchema.primary,
         padding: { x: 4, y: 4 },
         fullWidth: true,
+        font: { family: font },
         // margin: { x: 4, y: 4 },
         children: [
           {
             name: 'name',
-            text: 'This is my nane',
+            text: 'This is my nane árt',
             font: { color: 'white', size: 16 },
-            // bgColor: 'red',
+            bgColor: 'red',
             // fullWidth: true,
 
             // font: { size: 20, color: 'white', family: 'helvetica' },
@@ -544,7 +552,7 @@ const buildPDF = (curriculum: ICurriculum) => {
         // height: 100,
         children: [
           {
-            name: 'content', margin: { x: 0, y: 0 }, bgColor: '#116699', text: 'CONTENT', font: { size: 50 },
+            name: 'content', margin: { x: 0, y: 0 }, bgColor: '#116699', text: 'CONTENTa..', font: { size: 50, family: 'poppins' },
           },
           {
             name: 'content2', margin: { x: 0, y: 0 }, bgColor: '#116699', text: 'CONTENT2',
