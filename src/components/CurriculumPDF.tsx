@@ -24,13 +24,13 @@ function CurriculumPDF({ curriculum }:Props) {
   // const data2 = buildPDF(curriculum);
   return (
     <div className="h-full">
-      <select name="" id="" value={font} onChange={(e) => setFont(e.target.value)}>
+      {/* <select name="" id="" value={font} onChange={(e) => setFont(e.target.value)}>
 
         {Object.keys(pdf.getFontList()).map((item) => (
           <option key={item} value={item}>{item}</option>
         ))}
 
-      </select>
+      </select> */}
       <iframe
         title="Currículo"
         className="pdfobject"
