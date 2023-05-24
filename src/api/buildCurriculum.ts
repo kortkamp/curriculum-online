@@ -188,7 +188,7 @@ class Framework {
     this.fullWidth = fullWidth;
 
     this.height = height || 0;
-
+    this.width = width || maxWidth;
     this.buildChildren(children);
 
     const contentDimensions = this.getContentDimensions();
@@ -283,6 +283,11 @@ class Framework {
     }
     if (this.children.length) {
       contentDimensions = this.calculateChildrenTotalDimensions();
+      const totalGapSpaces = this.children.length - 1;
+      const totalVerticalGap = this.direction === 'v' ? totalGapSpaces * this.gap : 0;
+      const totalHorizontalGap = this.direction === 'h' ? totalGapSpaces * this.gap : 0;
+      contentDimensions.h += totalVerticalGap;
+      contentDimensions.w += totalHorizontalGap;
     }
     const dimensions = {
       w: 2 * this.margin.x + 2 * this.padding.x + contentDimensions.w,
@@ -509,8 +514,6 @@ class Framework {
 }
 
 const buildPDF = (curriculum: ICurriculum, font = '') => {
-  const pdf = new JsPDF('p', 'mm');
-
   const contentItem = (
     title:string,
     sub:string,
@@ -519,33 +522,34 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
   ) => {
     const result:IFrameworkOptions = {
       name: title,
-      margin: { x: 0, y: 2 },
       font: { size: 10 },
-      gap: 4,
+      gap: 2,
+      fullWidth: true,
       children: [
         {
           name: 'header',
           justify: 'between',
+          direction: 'h',
           children: [
             {
               name: 'title',
-              text: title,
+              text: title || '[title]',
               // bold
             },
             {
               name: 'aside',
-              text: aside,
+              text: aside || '[aside]',
             },
           ],
         },
         {
           name: 'sub',
           font: { color: '#8f8f8f' },
-          text: sub,
+          text: sub || '[sub]',
         },
         {
           name: 'content',
-          text: content,
+          text: content || '[content]',
         },
       ],
     };
@@ -619,7 +623,9 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
             margin: { x: 0, y: 0 },
             // bgColor: '#116699',
             // text: 'CONTENTa..',
+            gap: 0,
             children: education,
+
           },
           {
             name: 'aside',
@@ -633,6 +639,8 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
       },
     ],
   };
+
+  const pdf = new JsPDF('p', 'mm');
 
   const document = new Framework(pdf, data);
 
