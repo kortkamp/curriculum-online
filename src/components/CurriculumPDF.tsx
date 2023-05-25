@@ -1,25 +1,28 @@
-import buildPDF from '@/api/buildCurriculum';
+// import buildPDF from '@/api/buildCurriculum';
 import useCache from '@/hooks/useCache';
 import ICurriculum from '@/types/ICurriculum';
-import { useEffect, useState } from 'react';
+import {
+  useCallback, useEffect, useRef, useState,
+} from 'react';
 import jsPDF, { jsPDF as JsPDF } from 'jspdf';
+import buildPDF from '@/api/pdfMake';
 
 interface Props {
   curriculum: ICurriculum
 }
 
 function CurriculumPDF({ curriculum }:Props) {
-  const { resultData, updateRequest } = useCache(buildPDF);
+  const ref = useRef<null | HTMLIFrameElement>(null);
 
-  const [font, setFont] = useState('arial');
+  const myFunc = useCallback((aaa:ICurriculum) => buildPDF(ref)(aaa), [ref]);
 
-  const pdf = new JsPDF('p', 'mm');
+  const { resultData, updateRequest } = useCache(myFunc);
 
   // console.log('getStringUnitWidth ', pdf.getStringUnitWidth('asd', { font: 'helvetica' }));
-
+  // console.log('render');
   useEffect(() => {
-    updateRequest(curriculum, font);
-  }, [curriculum, updateRequest]);
+    updateRequest(curriculum);
+  }, [curriculum]);
 
   // const data2 = buildPDF(curriculum);
   return (
@@ -32,9 +35,10 @@ function CurriculumPDF({ curriculum }:Props) {
 
       </select> */}
       <iframe
+        ref={ref}
         title="Currículo"
         className="pdfobject"
-        src={resultData && `data:application/pdf; filename=generated.pdf; base64,${window.btoa(resultData)}#zoom=fit`}
+        // src={resultData && `data:application/pdf; filename=generated.pdf; base64,${resultData}#zoom=fit`}
         style={{
           overflow: 'auto', width: '100%', height: '100%',
         }}
