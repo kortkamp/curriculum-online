@@ -1,11 +1,20 @@
 import ICurriculum from '@/types/ICurriculum';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { TDocumentDefinitions } from 'pdfmake/interfaces';
 
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
 const buildPDF = (curriculum: ICurriculum):Promise<string> => {
-  const docDefinition = {
+  const docDefinition:TDocumentDefinitions = {
+    header: (currentPage, pageCount, pageSize) => [
+      { text: 'simple text', alignment: (currentPage % 2) ? 'left' : 'right' },
+      {
+        canvas: [{
+          type: 'rect', x: 170, y: 32, w: pageSize.width - 170, h: 40,
+        }],
+      },
+    ],
     content: [
       curriculum.personal.name,
       {

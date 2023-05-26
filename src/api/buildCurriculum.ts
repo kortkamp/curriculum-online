@@ -186,7 +186,8 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
 
   document.render();
 
-  return pdf.output();
+  const prefix = 'data:application/pdf; filename=generated.pdf; base64,';
+  return prefix + window.btoa(pdf.output());
 };
 
 export default buildPDF;

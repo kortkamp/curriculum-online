@@ -1,10 +1,11 @@
 // import buildPDF from '@/api/buildCurriculum';
+import buildPDF from '@/api/buildCurriculum';
 import useCache from '@/hooks/useCache';
 import ICurriculum from '@/types/ICurriculum';
 import {
   useEffect,
 } from 'react';
-import buildPDF from '@/api/pdfMake';
+// import buildPDF from '@/api/pdfMake';
 
 interface Props {
   curriculum: ICurriculum
@@ -14,6 +15,8 @@ function CurriculumPDF({ curriculum }:Props) {
   const { resultData, updateRequest } = useCache(buildPDF);
 
   console.log('render CurriculumPDF');
+
+  // console.log(resultData)
 
   // console.log('getStringUnitWidth ', pdf.getStringUnitWidth('asd', { font: 'helvetica' }));
   // console.log('render');
