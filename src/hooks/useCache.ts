@@ -23,7 +23,7 @@ const useCache = < T extends (arg:any)=> any>
 
     const runCallback = async () => {
       const result = await callback(memoData);
-      setResultData(result);
+      if (result !== resultData) { setResultData(result); }
     };
 
     if (currentTime > triggerTime + timeout) {

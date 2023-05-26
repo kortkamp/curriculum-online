@@ -10,10 +10,18 @@ export interface IDimension {
 }
 
 const pageDimensions = { h: 297, w: 210 };
+const pageMargins = { x: 10, y: 10 };
+
+interface IPageProperties {
+  h: number,
+  w: number,
+  margin: ICoordinate,
+}
 
 type Direction = 'v' | 'h';
 type Justify = 'start' | 'end' | 'center' | 'between';
 type Align = 'start' | 'middle' | 'end';
+
 export interface IFrameworkOptions {
   name: string
   position?: ICoordinate
@@ -34,6 +42,7 @@ export interface IFrameworkOptions {
   gap?: number
   children?: IFrameworkOptions[]
   text?:string
+  pageProperties?: IPageProperties
 }
 interface IFont {
   size: number,
@@ -50,6 +59,8 @@ const defaultFont = {
 
 class Framework {
   public bgColor : string | undefined;
+
+  public pageProperties: IPageProperties | undefined;
 
   public name: string;
 
@@ -128,10 +139,13 @@ class Framework {
       children,
       padding = { x: 0, y: 0 },
       text,
+      pageProperties,
     }:IFrameworkOptions,
   ) {
     // console.log(position);
     this.pdf = pdf;
+
+    this.pageProperties = pageProperties;
 
     this.name = name;
 
@@ -177,6 +191,25 @@ class Framework {
   }
 
   render() {
+    const pageMarginY = this.pageProperties?.margin.y || 0;
+    if (this.position.y + this.height > (pageDimensions.h - pageMarginY)) {
+      console.log(`${this.name} overflows page height`);
+      console.log(this.position.x, this.position.y);
+
+      const totalPages = this.pdf.getNumberOfPages();
+
+      // we are in the last page
+      if (this.currentPage === totalPages) {
+        this.pdf.addPage();
+      }
+
+      let newPositionY = this.position.y - pageDimensions.h + pageMarginY;
+      if (newPositionY < pageMarginY) newPositionY = pageMarginY;
+      this.position.y = newPositionY;
+      this.currentPage += 1;
+      this.cursor.y = 0;
+    }
+
     this.setBackgroundStyle();
     this.setFont();
     if (this.text) {
@@ -190,6 +223,7 @@ class Framework {
   setBackgroundStyle() {
     if (!this.bgColor) return;
 
+    this.pdf.setPage(this.currentPage);
     this.pdf.setDrawColor(this.bgColor);
     this.pdf.setFillColor(this.bgColor);
     this.pdf.rect(
@@ -289,6 +323,7 @@ class Framework {
           color: childData.font?.color || this.font.color,
           weight: childData.font?.weight || this.font.weight,
         },
+        pageProperties: this.pageProperties,
       },
     );
 
@@ -298,21 +333,6 @@ class Framework {
       this.cursor.x += child.width || 0;
     }
 
-    if (child.position.y + child.height > pageDimensions.h) {
-      child.currentPage += 1;
-      child.addPosition({ x: 0, y: -pageDimensions.h });
-      console.log(`${this.name} overflows page height`);
-
-      const totalPages = this.pdf.getNumberOfPages();
-
-      // we are in the last page
-      if (this.currentPage === totalPages) {
-        this.pdf.addPage();
-      }
-
-      child.currentPage += 1;
-      this.cursor.y = 0;
-    }
     this.children.push(child);
 
     // console.log('new cursor ', this.cursor);
@@ -479,7 +499,7 @@ class Framework {
     }
     const textDimensions = this.getTextDimension();
 
-    const writableBottomLimit = this.height - 2 * this.margin.y;
+    // const writableBottomLimit = this.height - 2 * this.margin.y;
 
     // if (this.cursor.y + textDimensions.h > writableBottomLimit) {
     //   const totalPages = this.pdf.getNumberOfPages();

@@ -93,6 +93,11 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
   const data: IFrameworkOptions = {
     height: pageDimensions.h,
     width: pageDimensions.w,
+    pageProperties: {
+      h: pageDimensions.h,
+      w: pageDimensions.w,
+      margin: { x: 10, y: 10 },
+    },
     name: 'body',
     direction: 'v',
     children: [
@@ -155,11 +160,11 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
             // bgColor: '#116699',
             gap: 7,
             children: [
-              section('Formação', education),
+              // section('Formação', education),
               {
-                name: 'divider', bgColor: colorSchema.text.contrast.light, fullWidth: true, height: 0.1,
+                name: 'divider', bgColor: colorSchema.text.contrast.light, fullWidth: true, height: 190,
               },
-              section('Experiência', experience),
+              // section('Experiência', experience),
               {
                 name: 'divider', bgColor: colorSchema.text.contrast.light, fullWidth: true, height: 0.1,
               },
