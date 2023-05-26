@@ -1,11 +1,10 @@
 import ICurriculum from '@/types/ICurriculum';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
-import { MutableRefObject } from 'react';
 
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
-const buildIframe = (curriculum: ICurriculum, ref: MutableRefObject<HTMLIFrameElement | null>) => {
+const buildPDF = (curriculum: ICurriculum):Promise<string> => {
   const docDefinition = {
     content: [
       curriculum.personal.name,
@@ -42,13 +41,11 @@ const buildIframe = (curriculum: ICurriculum, ref: MutableRefObject<HTMLIFrameEl
 
   const pdfDocGenerator = pdfMake.createPdf(docDefinition);
 
-  pdfDocGenerator.getDataUrl((data) => {
-    if (ref.current) {
-      ref.current.src = data;
-    }
+  return new Promise((resolve) => {
+    pdfDocGenerator.getDataUrl((data) => {
+      resolve(data);
+    });
   });
 };
-
-const buildPDF = (ref: MutableRefObject<HTMLIFrameElement | null>) => (curriculum: ICurriculum) => buildIframe(curriculum, ref);
 
 export default buildPDF;

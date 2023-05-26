@@ -66,6 +66,7 @@ export default function Home() {
   );
 
   const onSubmit: SubmitHandler<ICurriculum> = (data) => console.log(data);
+  console.log('render page');
   return (
     <div className="flex h-screen">
       <div className="flex-1 overflow-y-scroll">

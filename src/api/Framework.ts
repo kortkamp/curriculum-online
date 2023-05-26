@@ -9,6 +9,8 @@ export interface IDimension {
   h: number
 }
 
+const pageDimensions = { h: 297, w: 210 };
+
 type Direction = 'v' | 'h';
 type Justify = 'start' | 'end' | 'center' | 'between';
 type Align = 'start' | 'middle' | 'end';
@@ -19,7 +21,7 @@ export interface IFrameworkOptions {
   cursor?: ICoordinate
   margin?: ICoordinate
   padding?: ICoordinate
-  page?: IDimension
+  page?: number
   font?: Partial<IFont>
   height?: number
   maxHeight?: number
@@ -75,6 +77,8 @@ class Framework {
 
   public currentPage = 1;
 
+  public page: number;
+
   public font: IFont;
 
   public height: number = 0;
@@ -106,6 +110,7 @@ class Framework {
     pdf: jsPDF,
     {
       name = '',
+      page = 1,
       position = { x: 0, y: 0 },
       cursor = { x: 0, y: 0 },
       margin = { x: 0, y: 0 },
@@ -129,6 +134,8 @@ class Framework {
     this.pdf = pdf;
 
     this.name = name;
+
+    this.page = page;
 
     this.position = position;
     this.cursor = cursor;
@@ -182,6 +189,7 @@ class Framework {
 
   setBackgroundStyle() {
     if (!this.bgColor) return;
+
     this.pdf.setDrawColor(this.bgColor);
     this.pdf.setFillColor(this.bgColor);
     this.pdf.rect(
@@ -199,10 +207,8 @@ class Framework {
     this.pdf.setFont(this.font.family, this.font.weight);
   }
 
-  page(index: number) {
+  setPage(index: number) {
     this.currentPage = index;
-    this.pdf.setPage(index);
-    return this;
   }
 
   addPosition(value:ICoordinate) {
@@ -285,13 +291,30 @@ class Framework {
         },
       },
     );
-    this.children.push(child);
 
     if (this.direction === 'v') {
       this.cursor.y += child.height || 0;
     } else {
       this.cursor.x += child.width || 0;
     }
+
+    if (child.position.y + child.height > pageDimensions.h) {
+      child.currentPage += 1;
+      child.addPosition({ x: 0, y: -pageDimensions.h });
+      console.log(`${this.name} overflows page height`);
+
+      const totalPages = this.pdf.getNumberOfPages();
+
+      // we are in the last page
+      if (this.currentPage === totalPages) {
+        this.pdf.addPage();
+      }
+
+      child.currentPage += 1;
+      this.cursor.y = 0;
+    }
+    this.children.push(child);
+
     // console.log('new cursor ', this.cursor);
   }
 
@@ -458,17 +481,17 @@ class Framework {
 
     const writableBottomLimit = this.height - 2 * this.margin.y;
 
-    if (this.cursor.y + textDimensions.h > writableBottomLimit) {
-      const totalPages = this.pdf.getNumberOfPages();
+    // if (this.cursor.y + textDimensions.h > writableBottomLimit) {
+    //   const totalPages = this.pdf.getNumberOfPages();
 
-      // we are in the last page
-      if (this.currentPage === totalPages) {
-        this.pdf.addPage();
-      }
+    //   // we are in the last page
+    //   if (this.currentPage === totalPages) {
+    //     this.pdf.addPage();
+    //   }
 
-      this.currentPage += 1;
-      this.cursor.y = 0;
-    }
+    //   this.currentPage += 1;
+    //   this.cursor.y = 0;
+    // }
 
     this.pdf.setPage(this.currentPage);
 
