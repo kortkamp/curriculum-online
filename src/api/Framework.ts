@@ -43,6 +43,7 @@ export interface IFrameworkOptions {
   children?: IFrameworkOptions[]
   text?:string
   pageProperties?: IPageProperties
+  allowSplit?: boolean
 }
 interface IFont {
   size: number,
@@ -61,6 +62,8 @@ class Framework {
   public bgColor : string | undefined;
 
   public pageProperties: IPageProperties | undefined;
+
+  public allowSplit: boolean;
 
   public name: string;
 
@@ -140,12 +143,15 @@ class Framework {
       padding = { x: 0, y: 0 },
       text,
       pageProperties,
+      allowSplit,
     }:IFrameworkOptions,
   ) {
     // console.log(position);
     this.pdf = pdf;
 
     this.pageProperties = pageProperties;
+
+    this.allowSplit = allowSplit || !text || true;
 
     this.name = name;
 
@@ -203,8 +209,8 @@ class Framework {
         this.pdf.addPage();
       }
 
-      let newPositionY = this.position.y - pageDimensions.h + pageMarginY;
-      if (newPositionY < pageMarginY) newPositionY = pageMarginY;
+      const newPositionY = this.position.y - pageDimensions.h + 2 * pageMarginY;
+      // if (newPositionY < pageMarginY) newPositionY = pageMarginY;
       this.position.y = newPositionY;
       this.currentPage += 1;
       this.cursor.y = 0;

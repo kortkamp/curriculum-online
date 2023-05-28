@@ -162,7 +162,7 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
             children: [
               // section('Formação', education),
               {
-                name: 'divider', bgColor: colorSchema.text.contrast.light, fullWidth: true, height: 190,
+                name: 'divider', bgColor: colorSchema.text.contrast.light, fullWidth: true, height: 180,
               },
               // section('Experiência', experience),
               {
