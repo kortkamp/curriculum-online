@@ -35,7 +35,7 @@ export const curriculum:ICurriculum = {
   experience: [
     {
       origin: 'Pemak Sistemas',
-      title: 'Fullstack Developer',
+      title: '1Fullstack Developer',
       description: 'Atuei no desenvolvimento de SaaS para geração de portais de prestação de contas para ONGs, fui responsável desde a modelagem ao deploy e manutenção do sistema',
       start: {
         month: 3,
@@ -49,7 +49,7 @@ export const curriculum:ICurriculum = {
     },
     {
       origin: 'Startup Escolar',
-      title: 'Fullstack Developer',
+      title: '2Fullstack Developer',
       description: 'Atuei no desenvolvimento de SaaS multi tenant para gestão escolar usando Node, React, Postgres',
       start: {
         month: 3,
@@ -63,7 +63,7 @@ export const curriculum:ICurriculum = {
     },
     {
       origin: 'Creative Code - Londrina',
-      title: 'Backend Developer',
+      title: '3Backend Developer',
       description: 'Atuei no desenvolvimento e manutenção de APIs para sistemas diversos usando Node',
       start: {
         month: 3,

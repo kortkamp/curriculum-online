@@ -14,7 +14,7 @@ interface Props {
 function CurriculumPDF({ curriculum }:Props) {
   const { resultData, updateRequest } = useCache(buildPDF);
 
-  console.log('render CurriculumPDF');
+  // console.log('render CurriculumPDF');
 
   // console.log(resultData)
 
@@ -39,7 +39,7 @@ function CurriculumPDF({ curriculum }:Props) {
       <iframe
         title="Currículo"
         className="pdfobject"
-        src={resultData}
+        src={`${resultData}#zoom=70%`}
         style={{
           overflow: 'auto', width: '100%', height: '100%',
         }}

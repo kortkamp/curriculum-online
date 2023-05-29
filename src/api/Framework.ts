@@ -12,6 +12,12 @@ export interface IDimension {
 const pageDimensions = { h: 297, w: 210 };
 const pageMargins = { x: 10, y: 10 };
 
+const defaultPageProperties = {
+  h: pageDimensions.h,
+  w: pageDimensions.w,
+  margin: { x: 10, y: 10 },
+};
+
 interface IPageProperties {
   h: number,
   w: number,
@@ -61,7 +67,7 @@ const defaultFont = {
 class Framework {
   public bgColor : string | undefined;
 
-  public pageProperties: IPageProperties | undefined;
+  public pageProperties: IPageProperties;
 
   public allowSplit: boolean;
 
@@ -149,9 +155,13 @@ class Framework {
     // console.log(position);
     this.pdf = pdf;
 
-    this.pageProperties = pageProperties;
+    this.pageProperties = pageProperties || defaultPageProperties;
 
-    this.allowSplit = allowSplit || !text || true;
+    if (text) {
+      this.allowSplit = false;
+    } else {
+      this.allowSplit = allowSplit || true;
+    }
 
     this.name = name;
 
@@ -196,33 +206,51 @@ class Framework {
     this.width = fullWidth ? this.maxWidth : (width || contentDimensions.w);
   }
 
-  render() {
-    const pageMarginY = this.pageProperties?.margin.y || 0;
-    if (this.position.y + this.height > (pageDimensions.h - pageMarginY)) {
-      console.log(`${this.name} overflows page height`);
-      console.log(this.position.x, this.position.y);
+  applyPageBreak(providedThreshold?: number) {
+    const pageLimit = providedThreshold || this.pageProperties.h - this.pageProperties.margin.y;
 
-      const totalPages = this.pdf.getNumberOfPages();
+    const overflowingChildren = this.children.filter(
+      (child) => child.position.y + child.height > pageLimit,
+    );
 
-      // we are in the last page
-      if (this.currentPage === totalPages) {
-        this.pdf.addPage();
+    if (!overflowingChildren.length) return;
+
+    const breakPageThreshold = overflowingChildren[0].position.y;
+
+    console.log(this.name, this.allowSplit);
+
+    overflowingChildren.forEach((child) => {
+      if (child.allowSplit) {
+        child.applyPageBreak(pageLimit);
+      } else {
+        const totalPages = this.pdf.getNumberOfPages();
+
+        if (child.currentPage === totalPages) {
+          this.pdf.addPage();
+        }
+        console.log('breakPageThreshold ', breakPageThreshold);
+        console.log(child.position.y);
+
+        child.addPosition({ x: 0, y: -breakPageThreshold + this.pageProperties.margin.y });
+        console.log(`newY ${child.position.y}`);
+
+        child.setPage(child.currentPage + 1);
       }
+    });
+  }
 
-      const newPositionY = this.position.y - pageDimensions.h + 2 * pageMarginY;
-      // if (newPositionY < pageMarginY) newPositionY = pageMarginY;
-      this.position.y = newPositionY;
-      this.currentPage += 1;
-      this.cursor.y = 0;
+  render(breakPage = true) {
+    if (breakPage) {
+      this.applyPageBreak();
     }
 
     this.setBackgroundStyle();
-    this.setFont();
     if (this.text) {
+      this.setFont();
       this.write();
     }
     if (this.children.length) {
-      this.children.forEach((child) => { child.render(); });
+      this.children.forEach((child) => { child.render(false); });
     }
   }
 
@@ -249,11 +277,13 @@ class Framework {
 
   setPage(index: number) {
     this.currentPage = index;
+    this.children.forEach((child) => child.setPage(index));
   }
 
   addPosition(value:ICoordinate) {
     const { x, y } = this.position;
     this.position = { x: x + value.x, y: y + value.y };
+    this.children.forEach((child) => child.addPosition(value));
   }
 
   getTextDimension():IDimension {
