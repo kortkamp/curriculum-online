@@ -27,6 +27,7 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
     const sectionData:IFrameworkOptions = {
       name: `section-${title}`,
       gap: 10,
+      allowSplit: true,
       children: [
         {
           name: 'section-header',
@@ -50,10 +51,12 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
     aside:string = '',
   ) => {
     const result:IFrameworkOptions = {
-      name: title,
+      name: `section-item-${title}`,
       font: { size: 10 },
       gap: 1.5,
       fullWidth: true,
+      allowSplit: true,
+      bgColor: 'blue',
       children: [
         {
           name: 'header',

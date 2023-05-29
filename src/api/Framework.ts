@@ -149,7 +149,7 @@ class Framework {
       padding = { x: 0, y: 0 },
       text,
       pageProperties,
-      allowSplit,
+      allowSplit = true,
     }:IFrameworkOptions,
   ) {
     // console.log(position);
@@ -160,7 +160,7 @@ class Framework {
     if (text) {
       this.allowSplit = false;
     } else {
-      this.allowSplit = allowSplit || true;
+      this.allowSplit = allowSplit;
     }
 
     this.name = name;
@@ -206,8 +206,8 @@ class Framework {
     this.width = fullWidth ? this.maxWidth : (width || contentDimensions.w);
   }
 
-  applyPageBreak(providedThreshold?: number) {
-    const pageLimit = providedThreshold || this.pageProperties.h - this.pageProperties.margin.y;
+  applyPageBreak(transposeY = 0) {
+    const pageLimit = this.pageProperties.h - this.pageProperties.margin.y;
 
     const overflowingChildren = this.children.filter(
       (child) => child.position.y + child.height > pageLimit,
@@ -217,22 +217,33 @@ class Framework {
 
     const breakPageThreshold = overflowingChildren[0].position.y;
 
-    console.log(this.name, this.allowSplit);
+    let newTransposeY = 0;
+
+    // console.log(this.name, this.allowSplit);
 
     overflowingChildren.forEach((child) => {
+      if (child.name.startsWith('section-item')) {
+        console.log(child.name);
+        console.log(child.allowSplit);
+      }
       if (child.allowSplit) {
-        child.applyPageBreak(pageLimit);
+        child.applyPageBreak(newTransposeY);
       } else {
         const totalPages = this.pdf.getNumberOfPages();
 
         if (child.currentPage === totalPages) {
           this.pdf.addPage();
         }
-        console.log('breakPageThreshold ', breakPageThreshold);
-        console.log(child.position.y);
+        // console.log('breakPageThreshold ', breakPageThreshold);
+        // console.log(child.position.y);
 
-        child.addPosition({ x: 0, y: -breakPageThreshold + this.pageProperties.margin.y });
-        console.log(`newY ${child.position.y}`);
+        newTransposeY = pageLimit - child.position.y;
+
+        child.addPosition({
+          x: 0,
+          y: -pageLimit + newTransposeY + transposeY + this.pageProperties.margin.y,
+        });
+        // console.log(`newY ${child.position.y}`);
 
         child.setPage(child.currentPage + 1);
       }
@@ -478,8 +489,6 @@ class Framework {
       });
     }
 
-    // /aqui devemos calcular um vetor de acordo com a orientaçao do parent
-
     const remainingWidth = parentWidth - childrenWidth;
 
     // apply fullWidth
@@ -533,44 +542,23 @@ class Framework {
     if (!this.text) {
       return;
     }
-    const textDimensions = this.getTextDimension();
-
-    // const writableBottomLimit = this.height - 2 * this.margin.y;
-
-    // if (this.cursor.y + textDimensions.h > writableBottomLimit) {
-    //   const totalPages = this.pdf.getNumberOfPages();
-
-    //   // we are in the last page
-    //   if (this.currentPage === totalPages) {
-    //     this.pdf.addPage();
-    //   }
-
-    //   this.currentPage += 1;
-    //   this.cursor.y = 0;
-    // }
+    // const textDimensions = this.getTextDimension();
 
     this.pdf.setPage(this.currentPage);
 
     this.pdf.text(
       this.text,
-      this.cursor.x + this.margin.x + this.position.x + this.padding.x,
-      this.cursor.y + this.margin.y + this.position.y + this.padding.y,
+      this.margin.x + this.position.x + this.padding.x,
+      this.margin.y + this.position.y + this.padding.y,
       {
         baseline: 'top',
         maxWidth:
          this.width
-         - this.cursor.x
          - 2 * this.margin.x
          - 2 * this.padding.x
          + MINIMUM_VALUE_TO_PREVENT_LINE_BREAK_BUG,
       },
     );
-
-    if (this.direction === 'v') {
-      this.cursor.y += this.lineSpacing + textDimensions.h;
-    } else {
-      this.cursor.x += this.wordSpacing + textDimensions.w;
-    }
   }
 }
 
