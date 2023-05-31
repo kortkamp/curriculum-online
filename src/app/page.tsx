@@ -125,6 +125,42 @@ export const curriculum:ICurriculum = {
       title: 'Inglês',
       level: 3,
     },
+    {
+      title: 'Árabe',
+      level: 3,
+    },
+    {
+      title: 'Curdo',
+      level: 3,
+    },
+    {
+      title: 'Turco',
+      level: 3,
+    },
+    {
+      title: 'Farsi',
+      level: 3,
+    },
+    {
+      title: 'Urdu',
+      level: 3,
+    },
+    {
+      title: 'Yanomami',
+      level: 3,
+    },
+    {
+      title: 'Tupi',
+      level: 3,
+    },
+    {
+      title: 'Guarani',
+      level: 3,
+    },
+    {
+      title: 'Marajoara',
+      level: 3,
+    },
   ],
 };
 

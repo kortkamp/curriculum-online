@@ -50,6 +50,7 @@ export interface IFrameworkOptions {
   text?:string
   pageProperties?: IPageProperties
   allowSplit?: boolean
+  nodeDepth?: number
 }
 interface IFont {
   size: number,
@@ -117,6 +118,8 @@ class Framework {
 
   private pdf: jsPDF;
 
+  private nodeDepth: number;
+
   constructor(
     // when construction the node we need to fallow these steps
     /**
@@ -150,10 +153,13 @@ class Framework {
       text,
       pageProperties,
       allowSplit = true,
+      nodeDepth = 0,
     }:IFrameworkOptions,
   ) {
     // console.log(position);
     this.pdf = pdf;
+
+    this.nodeDepth = nodeDepth;
 
     this.pageProperties = pageProperties || defaultPageProperties;
 
@@ -206,53 +212,70 @@ class Framework {
     this.width = fullWidth ? this.maxWidth : (width || contentDimensions.w);
   }
 
-  applyPageBreak(transposeY = 0) {
+  addPage() {
+    this.pdf.addPage();
+  }
+
+  log(message?: any, ...optionalParams: any[]) {
+    const prefix = new Array(this.nodeDepth * 2).join(' ');
+    console.log(`${prefix}${message} ${optionalParams.join(' ')}`);
+  }
+
+  applyPageBreak(): number {
     const pageLimit = this.pageProperties.h - this.pageProperties.margin.y;
 
-    const overflowingChildren = this.children.filter(
-      (child) => child.position.y + child.height > pageLimit,
+    const foreignChildren = this.children.filter(
+      (child) => child.position.y >= pageLimit,
     );
 
-    if (!overflowingChildren.length) return;
+    const transboundaryChildren = this.children.filter(
+      (child) => child.position.y <= pageLimit && child.position.y + child.height >= pageLimit,
+    );
 
-    const breakPageThreshold = overflowingChildren[0].position.y;
+    const notSplittable = transboundaryChildren.filter((child) => !child.allowSplit);
+    const splittable = transboundaryChildren.filter((child) => child.allowSplit);
 
-    let newTransposeY = 0;
+    this.log(this.name);
+    this.log(this.children.length, foreignChildren.length, transboundaryChildren.length);
+    this.log(notSplittable.length, splittable.length);
 
-    // console.log(this.name, this.allowSplit);
+    if (!foreignChildren.length && !transboundaryChildren.length) return 0;
 
-    overflowingChildren.forEach((child) => {
-      if (child.name.startsWith('section-item')) {
-        console.log(child.name);
-        console.log(child.allowSplit);
+    let newOffsetY = 0;
+
+    splittable.forEach((child) => {
+      newOffsetY = child.applyPageBreak();
+      this.log(`child ${child.name} returned ${newOffsetY}`);
+    });
+
+    notSplittable.concat(foreignChildren).forEach((child) => {
+      const totalPages = this.pdf.getNumberOfPages();
+      child.addPosition({
+        x: 0,
+        y: -pageLimit
+          + this.pageProperties.margin.y
+          + newOffsetY,
+      });
+      if (child.currentPage === totalPages) {
+        this.addPage();
       }
-      if (child.allowSplit) {
-        child.applyPageBreak(newTransposeY);
-      } else {
-        const totalPages = this.pdf.getNumberOfPages();
-
-        if (child.currentPage === totalPages) {
-          this.pdf.addPage();
-        }
-        // console.log('breakPageThreshold ', breakPageThreshold);
-        // console.log(child.position.y);
-
-        newTransposeY = pageLimit - child.position.y;
-
-        child.addPosition({
-          x: 0,
-          y: -pageLimit + newTransposeY + transposeY + this.pageProperties.margin.y,
-        });
-        // console.log(`newY ${child.position.y}`);
-
-        child.setPage(child.currentPage + 1);
+      child.setPage(child.currentPage + 1);
+      if (child.position.y < this.pageProperties.margin.y) {
+        newOffsetY = this.pageProperties.margin.y - child.position.y;
+        child.addPosition({ x: 0, y: newOffsetY });
+        this.log(`setting offsetY ${newOffsetY}`);
       }
     });
+
+    return newOffsetY;
   }
 
   render(breakPage = true) {
     if (breakPage) {
-      this.applyPageBreak();
+      let aaa = this.applyPageBreak();
+      while (aaa !== 0) {
+        aaa = this.applyPageBreak();
+      }
     }
 
     this.setBackgroundStyle();
@@ -371,6 +394,7 @@ class Framework {
           weight: childData.font?.weight || this.font.weight,
         },
         pageProperties: this.pageProperties,
+        nodeDepth: this.nodeDepth + 1,
       },
     );
 

@@ -5,6 +5,22 @@ import '../assets/Poppins-Regular-normal';
 import { Framework, IFrameworkOptions } from './Framework';
 // import '../assets/Poppins-Medium-normal';
 
+const Months = [
+  '',
+  'jan',
+  'fev',
+  'mar',
+  'abr',
+  'mai',
+  'jun',
+  'jul',
+  'ago',
+  'set',
+  'out',
+  'nov',
+  'dez',
+];
+
 const colorSchema = {
   primary: '#2c3544',
   neutral: {
@@ -23,6 +39,10 @@ const colorSchema = {
 const pageDimensions = { h: 297, w: 210 };
 
 const buildPDF = (curriculum: ICurriculum, font = '') => {
+  const divider = {
+    name: 'divider', bgColor: colorSchema.text.contrast.light, fullWidth: true, height: 0.1,
+  };
+
   const section = (title: string, children: IFrameworkOptions[]) => {
     const sectionData:IFrameworkOptions = {
       name: `section-${title}`,
@@ -44,19 +64,27 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
     return sectionData;
   };
 
+  interface ISectionProps {
+    title:string;
+    sub?:string,
+    content?:string,
+    aside?:string,
+  }
   const sectionItem = (
-    title:string,
-    sub:string,
-    content:string = '',
-    aside:string = '',
+    {
+      title,
+      sub = '',
+      content = '',
+      aside = '',
+    }: ISectionProps,
   ) => {
     const result:IFrameworkOptions = {
       name: `section-item-${title}`,
       font: { size: 10 },
       gap: 1.5,
       fullWidth: true,
-      allowSplit: true,
-      bgColor: 'blue',
+      allowSplit: false,
+      // bgColor: 'blue',
       children: [
         {
           name: 'header',
@@ -71,18 +99,18 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
             },
             {
               name: 'aside',
-              text: aside || '[aside]',
+              text: aside || '',
             },
           ],
         },
         {
           name: 'sub',
           font: { color: '#8f8f8f' },
-          text: sub || '[sub]',
+          text: sub || '',
         },
         {
           name: 'content',
-          text: content || '[content]',
+          text: content || '',
         },
       ],
     };
@@ -90,8 +118,46 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
     return result;
   };
 
-  const education = curriculum.education.map((item) => sectionItem(item.title, `${item.origin} ${item.city}`, item.description));
-  const experience = curriculum.experience.map((item) => sectionItem(item.title, `${item.origin} ${item.city}`, item.description));
+  const skillItem = (
+    title:string,
+    value?:number,
+  ) => {
+    const result:IFrameworkOptions = {
+      name: `section-item-${title}`,
+      font: { size: 10 },
+      gap: 1.5,
+      fullWidth: true,
+      allowSplit: false,
+      // bgColor: 'blue',
+      children: [
+        {
+          name: 'title',
+          text: title || '[title]',
+          font: { size: 12 },
+          // bold
+        },
+      ],
+    };
+
+    return result;
+  };
+
+  const education = curriculum.education.map((item) => sectionItem(
+    {
+      title: item.title,
+      sub: `${item.origin} ${item.city}`,
+      content: item.description,
+      aside: `${item.start?.month ? Months[item.start?.month] : ''} ${item.start?.year || ''} - ${item.end?.month ? Months[item.end?.month] : ''} ${item.end?.year || ''}`,
+    },
+  ));
+  const experience = curriculum.experience.map((item) => sectionItem(
+    {
+      title: item.title,
+      sub: `${item.origin} ${item.city}`,
+      content: item.description,
+      aside: `${item.start?.month ? Months[item.start?.month] : ''} ${item.start?.year || ''} - ${item.end?.month ? Months[item.end?.month] : ''} ${item.end?.year || ''}`,
+    },
+  ));
 
   const data: IFrameworkOptions = {
     height: pageDimensions.h,
@@ -165,13 +231,22 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
             children: [
               // section('Formação', education),
               {
-                name: 'divider', bgColor: colorSchema.text.contrast.light, fullWidth: true, height: 180,
+                name: 'divider', bgColor: colorSchema.text.contrast.light, fullWidth: true, height: 150,
               },
               // section('Experiência', experience),
               {
                 name: 'divider', bgColor: colorSchema.text.contrast.light, fullWidth: true, height: 0.1,
               },
               section('Experiência', experience),
+              {
+                name: 'divider', bgColor: colorSchema.text.contrast.light, fullWidth: true, height: 0.1,
+              },
+              section('Formação', education),
+              {
+                name: 'divider', bgColor: colorSchema.text.contrast.light, fullWidth: true, height: 100,
+              },
+              section('Experiência', experience),
+
             ],
 
           },
@@ -179,9 +254,35 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
             name: 'aside',
             width: 53,
             margin: { x: 0, y: 0 },
-            bgColor: '#005544',
-            text: 'ASIDE',
+            // bgColor: '#005544',
+            gap: 7,
             fullWidth: false,
+            children: [
+              section('Idiomas', curriculum.languages.map((item) => skillItem(item.title))),
+              divider,
+              section('Idiomas', curriculum.languages.map((item) => skillItem(item.title))),
+              divider,
+              section('Idiomas', curriculum.languages.map((item) => skillItem(item.title))),
+              divider,
+              section('Idiomas', curriculum.languages.map((item) => skillItem(item.title))),
+              divider,
+              section('Idiomas', curriculum.languages.map((item) => skillItem(item.title))),
+              divider,
+              section('Idiomas', curriculum.languages.map((item) => skillItem(item.title))),
+              divider,
+              section('Idiomas', curriculum.languages.map((item) => skillItem(item.title))),
+              divider,
+              section('Idiomas', curriculum.languages.map((item) => skillItem(item.title))),
+              divider,
+              section('Idiomas', curriculum.languages.map((item) => skillItem(item.title))),
+              divider,
+              section('Idiomas', curriculum.languages.map((item) => skillItem(item.title))),
+              divider,
+              section('Idiomas', curriculum.languages.map((item) => skillItem(item.title))),
+              divider,
+              section('Idiomas', curriculum.languages.map((item) => skillItem(item.title))),
+              divider,
+            ],
           },
         ],
       },
@@ -193,6 +294,8 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
   const document = new Framework(pdf, data);
 
   document.render();
+
+  console.log('==========================================');
 
   const prefix = 'data:application/pdf; filename=generated.pdf; base64,';
   return prefix + window.btoa(pdf.output());
