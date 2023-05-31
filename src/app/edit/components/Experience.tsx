@@ -48,17 +48,17 @@ function Experience({
         </div>
         <div className="flex justify-between gap-4 flex-1 max-md:flex-col">
           <div className="flex justify-between gap-4 flex-1 max-md:flex-col items-end">
-            <Input label="Data de Início" md={6} {...register(`${fieldName}.${index}.start.month`)} asChild>
+            <Input label="Data de Início" md={6} {...register(`${fieldName}.${index}.start.month`, { valueAsNumber: true })} asChild>
               <select>
-                <option value={undefined} className="text-light">Mês</option>
+                <option value={0} className="text-light">Mês</option>
                 {months.map((month, monthIndex) => (
                   <option key={month} value={monthIndex + 1}>{month}</option>
                 ))}
               </select>
             </Input>
-            <Input label="" md={6} asChild {...register(`${fieldName}.${index}.start.year`)}>
+            <Input label="" md={6} asChild {...register(`${fieldName}.${index}.start.year`, { valueAsNumber: true })}>
               <select>
-                <option value={undefined} className="text-light">Ano</option>
+                <option value={0} className="text-light">Ano</option>
                 { years.map((year) => (
                   <option value={year}>{year}</option>
                 ))}
@@ -66,17 +66,17 @@ function Experience({
             </Input>
           </div>
           <div className="flex justify-between gap-4 flex-1 max-md:flex-col items-end">
-            <Input label="Data de Término" md={6} {...register(`${fieldName}.${index}.end.month`)} asChild>
+            <Input label="Data de Término" md={6} {...register(`${fieldName}.${index}.end.month`, { valueAsNumber: true })} asChild>
               <select>
-                <option value={undefined} className="text-light">Mês</option>
+                <option value={0} className="text-light">Mês</option>
                 {months.map((month, monthIndex) => (
                   <option key={month} value={monthIndex + 1}>{month}</option>
                 ))}
               </select>
             </Input>
-            <Input label="" md={6} asChild {...register(`${fieldName}.${index}.end.year`)}>
+            <Input label="" md={6} asChild {...register(`${fieldName}.${index}.end.year`, { valueAsNumber: true })}>
               <select>
-                <option value={undefined} className="text-light">Ano</option>
+                <option value={0} className="text-light">Ano</option>
                 { years.map((year) => (
                   <option value={year}>{year}</option>
                 ))}

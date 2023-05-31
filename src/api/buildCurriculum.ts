@@ -93,9 +93,8 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
           children: [
             {
               name: 'title',
-              text: title || '[title]',
+              text: title || '',
               font: { size: 12 },
-              // bold
             },
             {
               name: 'aside',
@@ -142,22 +141,32 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
     return result;
   };
 
-  const education = curriculum.education.map((item) => sectionItem(
-    {
-      title: item.title,
-      sub: `${item.origin} ${item.city}`,
-      content: item.description,
-      aside: `${item.start?.month ? Months[item.start?.month] : ''} ${item.start?.year || ''} - ${item.end?.month ? Months[item.end?.month] : ''} ${item.end?.year || ''}`,
-    },
-  ));
-  const experience = curriculum.experience.map((item) => sectionItem(
-    {
-      title: item.title,
-      sub: `${item.origin} ${item.city}`,
-      content: item.description,
-      aside: `${item.start?.month ? Months[item.start?.month] : ''} ${item.start?.year || ''} - ${item.end?.month ? Months[item.end?.month] : ''} ${item.end?.year || ''}`,
-    },
-  ));
+  const education = curriculum.education.map((item) => {
+    const start = `${item.start?.month ? Months[item.start?.month] : ''} ${item.start?.year ? item.start?.year : ''}`.trim();
+    const end = item.isCurrent ? 'atual' : `${item.end?.month ? Months[item.end?.month] : ''} ${item.end?.year ? item.end?.year : ''}`.trim();
+    const aside = `${start}${end !== '' && start !== '' ? ' - ' : ''}${end}`;
+    return sectionItem(
+      {
+        title: item.title,
+        sub: `${item.origin} ${item.city}`,
+        content: item.description,
+        aside,
+      },
+    );
+  });
+  const experience = curriculum.experience.map((item) => {
+    const start = `${item.start?.month ? Months[item.start?.month] : ''} ${item.start?.year ? item.start?.year : ''}`.trim();
+    const end = item.isCurrent ? 'atual' : `${item.end?.month ? Months[item.end?.month] : ''} ${item.end?.year ? item.end?.year : ''}`.trim();
+    const aside = `${start}${end !== '' && start !== '' ? ' - ' : ''}${end}`;
+    return sectionItem(
+      {
+        title: item.title,
+        sub: `${item.origin} ${item.city || ''}`,
+        content: item.description,
+        aside,
+      },
+    );
+  });
 
   const data: IFrameworkOptions = {
     height: pageDimensions.h,
@@ -296,6 +305,8 @@ const buildPDF = (curriculum: ICurriculum, font = '') => {
   document.render();
 
   console.log('==========================================');
+
+  console.log(curriculum);
 
   const prefix = 'data:application/pdf; filename=generated.pdf; base64,';
   return prefix + window.btoa(pdf.output());

@@ -57,7 +57,7 @@ export const curriculum:ICurriculum = {
       },
       end: {
         month: 3,
-        year: 2024,
+        year: 2023,
       },
       isCurrent: false,
     },
@@ -67,11 +67,11 @@ export const curriculum:ICurriculum = {
       description: 'Atuei no desenvolvimento e manutenção de APIs para sistemas diversos usando Node',
       start: {
         month: 3,
-        year: 2023,
+        year: 2022,
       },
       end: {
         month: 3,
-        year: 2024,
+        year: 2023,
       },
       isCurrent: false,
     },

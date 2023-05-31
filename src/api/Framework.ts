@@ -221,6 +221,11 @@ class Framework {
     console.log(`${prefix}${message} ${optionalParams.join(' ')}`);
   }
 
+  /**
+   * There are two kinds of problems, mine problems
+   * and not mine problems,
+   * and how you are going to understand the fallowing code is not my problem
+   */
   applyPageBreak(): number {
     const pageLimit = this.pageProperties.h - this.pageProperties.margin.y;
 
@@ -235,9 +240,9 @@ class Framework {
     const notSplittable = transboundaryChildren.filter((child) => !child.allowSplit);
     const splittable = transboundaryChildren.filter((child) => child.allowSplit);
 
-    this.log(this.name);
-    this.log(this.children.length, foreignChildren.length, transboundaryChildren.length);
-    this.log(notSplittable.length, splittable.length);
+    // this.log(this.name);
+    // this.log(this.children.length, foreignChildren.length, transboundaryChildren.length);
+    // this.log(notSplittable.length, splittable.length);
 
     if (!foreignChildren.length && !transboundaryChildren.length) return 0;
 
@@ -273,8 +278,10 @@ class Framework {
   render(breakPage = true) {
     if (breakPage) {
       let aaa = this.applyPageBreak();
+      this.log('aaa', aaa);
       while (aaa !== 0) {
         aaa = this.applyPageBreak();
+        this.log('aaa', aaa);
       }
     }
 
